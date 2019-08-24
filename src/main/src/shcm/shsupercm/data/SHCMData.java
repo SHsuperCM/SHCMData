@@ -8,11 +8,11 @@ public class SHCMData {
     /**
      * The comparable representation of the library's internal version.
      */
-    public static final int versionID = 0;
+    public static final int versionID = 1;
     /**
      * The comparable representation of the data format's version.
      */
-    public static final int formatID = 0;
+    public static final int formatID = 1;
     /**
      * The displayable representation of the library's version.
      */
