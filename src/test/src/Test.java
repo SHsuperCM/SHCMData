@@ -19,7 +19,7 @@ public class Test {
         byte[] bytes = byteArrayOutputStream.toByteArray();
 
         Object deserialized = DataSerializer.read(new DataInputStream(new ByteArrayInputStream(bytes)));
-        System.out.println(original == deserialized);
+        System.out.println(original.equals(deserialized));
         System.out.println();
     }
 }

@@ -14,14 +14,18 @@ public class DataBlock extends DataKeyedBlock<String> {
     @Override
     protected void write(DataOutput dataOut) throws IOException, DataSerializer.UnknownDataTypeException {
         dataOut.writeByte(1);
+        dataOut.writeInt(values.size());
         if(!values.isEmpty()) {
             for(String key : values.keySet()) {
-                dataOut.writeBoolean(true);
                 DataSerializer.write(dataOut, key);
                 DataSerializer.write(dataOut, values.get(key));
             }
         }
-        dataOut.writeBoolean(false);
+    }
+
+    @Override
+    public boolean isCorrectKeyType(Object key) {
+        return key instanceof String;
     }
 
     @Override

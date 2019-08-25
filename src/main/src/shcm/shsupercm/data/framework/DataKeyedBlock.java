@@ -34,22 +34,22 @@ public class DataKeyedBlock<K> {
 
     protected void write(DataOutput dataOut) throws IOException, DataSerializer.UnknownDataTypeException {
         dataOut.writeByte(DataSerializer.getByteForType(exampleType));
+        dataOut.writeInt(values.size());
         if(!values.isEmpty()) {
             for(K key : values.keySet()) {
-                dataOut.writeBoolean(true);
                 DataSerializer.write(dataOut, key);
                 DataSerializer.write(dataOut, values.get(key));
             }
         }
-        dataOut.writeBoolean(false);
     }
 
     @SuppressWarnings("unchecked")
-    public static DataKeyedBlock read(DataInput dataIn) throws IOException, DataSerializer.UnexpectedByteException {
+    protected static DataKeyedBlock read(DataInput dataIn) throws IOException, DataSerializer.UnexpectedByteException {
         byte keyType = dataIn.readByte();
+        int size = dataIn.readInt();
         DataKeyedBlock dataKeyedBlock = createKeyTypeBasedOnByte(keyType);
-        while (dataIn.readBoolean()) {
-            Object key = DataSerializer.read(keyType, dataIn);
+        for(int i = 0; i < size; i++) {
+            Object key = DataSerializer.read(dataIn);
             if (!dataKeyedBlock.isCorrectKeyType(key))
                 throw new DataSerializer.UnexpectedByteException();
             Object value = DataSerializer.read(dataIn);
