@@ -1,7 +1,5 @@
 package shcm.shsupercm.data.framework;
 
-import shcm.shsupercm.data.types.DataKeyedBlock;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -205,8 +203,8 @@ public class DataSerializer {
             write(dataOut, (long[]) value);
         else if(value instanceof double[])
             write(dataOut, (double[]) value);
-
-        throw new UnknownDataTypeException();
+        else
+            throw new UnknownDataTypeException();
     }
 
     public static Object read(DataInput dataIn) throws IOException, UnexpectedByteException {
@@ -297,6 +295,7 @@ public class DataSerializer {
                 return values;
             }
         }
+
         throw new UnexpectedByteException();
     }
 

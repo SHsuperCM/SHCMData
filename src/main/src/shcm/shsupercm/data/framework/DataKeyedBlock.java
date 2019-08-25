@@ -1,6 +1,4 @@
-package shcm.shsupercm.data.types;
-
-import shcm.shsupercm.data.framework.DataSerializer;
+package shcm.shsupercm.data.framework;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -17,8 +15,9 @@ public class DataKeyedBlock<K> {
         this.exampleType = exampleType;
     }
 
-    public void set(K key, Object value) {
+    public DataKeyedBlock<K> set(K key, Object value) {
         values.put(key, value);
+        return this;
     }
 
     public Object get(K key) {
@@ -33,7 +32,7 @@ public class DataKeyedBlock<K> {
         return values.keySet();
     }
 
-    public void write(DataOutput dataOut) throws IOException, DataSerializer.UnknownDataTypeException {
+    protected void write(DataOutput dataOut) throws IOException, DataSerializer.UnknownDataTypeException {
         dataOut.writeByte(DataSerializer.getByteForType(exampleType));
         if(!values.isEmpty()) {
             for(K key : values.keySet()) {
