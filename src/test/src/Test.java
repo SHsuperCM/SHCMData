@@ -3,6 +3,7 @@ import shcm.shsupercm.data.framework.DataBlock;
 import shcm.shsupercm.data.framework.DataKeyedBlock;
 
 import java.io.*;
+import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) throws IOException, DataSerializer.UnknownDataTypeException, DataSerializer.UnexpectedByteException {
@@ -20,6 +21,12 @@ public class Test {
 
         Object deserialized = DataSerializer.read(new DataInputStream(new ByteArrayInputStream(bytes)));
         System.out.println(original.equals(deserialized));
+        System.out.println();
+
+        ByteArrayOutputStream byteArrayOutputStream2 = new ByteArrayOutputStream();
+        DataSerializer.write(new DataOutputStream(byteArrayOutputStream2), deserialized);
+        byte[] bytes2 = byteArrayOutputStream2.toByteArray();
+        System.out.println(Arrays.equals(bytes,bytes2));
         System.out.println();
     }
 }
