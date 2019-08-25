@@ -8,12 +8,12 @@ import java.util.Arrays;
 public class Test {
     public static void main(String[] args) throws IOException, DataSerializer.UnknownDataTypeException, DataSerializer.UnexpectedByteException {
         DataBlock original = new DataBlock()
-                .set("where", new DataKeyedBlock<>(' ')
+                .set("where", new DataKeyedBlock<>('\u0000')
                     .set('x', -45)
                     .set('y', 53)
                     .set('z', 23))
                 .set("what", "Just a thing, nothing really important tbh...")
-                .set("storage", new byte[]{0,48,-18,34,127,0,0,88,34,34,34,34,15,1});
+                .set("byte_shit", new byte[]{0,48,-18,34,127,0,0,88,34,34,34,34,15,1});
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataSerializer.write(new DataOutputStream(byteArrayOutputStream), original);

@@ -1,5 +1,7 @@
 package shcm.shsupercm.data.framework;
 
+import shcm.shsupercm.data.utils.Equality;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -9,10 +11,11 @@ import java.util.Set;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class DataKeyedBlock<K> {
     protected HashMap<K, Object> values = new HashMap<>();
-    private final K exampleType;
+    private final K exampleKeyType;
 
-    public DataKeyedBlock(K exampleType) {
-        this.exampleType = exampleType;
+    public DataKeyedBlock(K exampleKeyType) {
+        assert !(exampleKeyType instanceof String);
+        this.exampleKeyType = exampleKeyType;
     }
 
     public DataKeyedBlock<K> set(K key, Object value) {
@@ -25,7 +28,7 @@ public class DataKeyedBlock<K> {
     }
 
     public boolean isCorrectKeyType(Object key) {
-        return this.exampleType.getClass().isInstance(key);
+        return this.exampleKeyType.getClass().isInstance(key);
     }
 
     public Set<K> getKeys() {
@@ -33,7 +36,7 @@ public class DataKeyedBlock<K> {
     }
 
     protected void write(DataOutput dataOut) throws IOException, DataSerializer.UnknownDataTypeException {
-        dataOut.writeByte(DataSerializer.getByteForType(exampleType));
+        dataOut.writeByte(DataSerializer.getByteForType(exampleKeyType));
         dataOut.writeInt(values.size());
         if(!values.isEmpty()) {
             for(K key : values.keySet()) {
@@ -65,7 +68,7 @@ public class DataKeyedBlock<K> {
             case 1:
                 return new DataBlock();
             case 2:
-                return new DataKeyedBlock<>(true);
+                return new DataKeyedBlock<>(false);
             case 3:
                 return new DataKeyedBlock<>((byte)0);
             case 4:
@@ -104,5 +107,26 @@ public class DataKeyedBlock<K> {
         }
 
         throw new DataSerializer.UnexpectedByteException();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            DataKeyedBlock<K> other = (DataKeyedBlock<K>)obj;
+            if (values.size() != other.values.size())
+                return false;
+
+            for (K key : getKeys()) {
+                Object value = get(key);
+                Object otherValue = other.get(key);
+                if(!Equality.areObjectsEqual(value, otherValue))
+                        return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
