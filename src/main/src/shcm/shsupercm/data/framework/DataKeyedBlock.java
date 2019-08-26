@@ -18,6 +18,8 @@ public class DataKeyedBlock<K> {
         this.exampleKeyType = exampleKeyType;
     }
 
+    //todo create custom no-constructor provider
+
     public DataKeyedBlock<K> set(K key, Object value) {
         values.put(key, value);
         return this;
@@ -109,6 +111,10 @@ public class DataKeyedBlock<K> {
         throw new DataSerializer.UnexpectedByteException();
     }
 
+    public DataBlock getBlock(K key) {
+        return (DataBlock) get(key);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
@@ -121,7 +127,7 @@ public class DataKeyedBlock<K> {
                 Object value = get(key);
                 Object otherValue = other.get(key);
                 if(!Equality.areObjectsEqual(value, otherValue))
-                        return false;
+                    return false;
             }
 
             return true;
