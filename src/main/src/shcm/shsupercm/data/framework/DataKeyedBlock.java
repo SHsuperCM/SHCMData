@@ -20,6 +20,8 @@ public class DataKeyedBlock<K> {
 
     //todo create custom no-constructor provider
 
+    //todo hold key type as class instead of example key
+
     public DataKeyedBlock<K> set(K key, Object value) {
         values.put(key, value);
         return this;

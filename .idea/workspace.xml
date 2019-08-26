@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="43cc1579-cd14-46eb-9f52-eace56c99d41" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/SHCMData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/SHCMData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataSerializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataSerializer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/src/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/src/Test.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -18,11 +19,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test/src/Test.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="34" selection-start-line="34" selection-end-line="34" />
+            <state relative-caret-position="115">
+              <caret line="26" column="8" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="8" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -31,10 +32,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/SHCMData.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="3" lean-forward="true" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1300">
-              <caret line="101" column="56" lean-forward="true" selection-start-line="101" selection-start-column="56" selection-end-line="101" selection-end-column="56" />
+            <state relative-caret-position="287">
+              <caret line="22" column="56" selection-start-line="22" selection-start-column="56" selection-end-line="22" selection-end-column="56" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -101,11 +111,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataSerializer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-85">
-              <caret line="34" column="21" lean-forward="true" selection-start-line="34" selection-start-column="21" selection-end-line="34" selection-end-column="21" />
+            <state relative-caret-position="4284">
+              <caret line="252" column="22" lean-forward="true" selection-start-line="252" selection-start-column="22" selection-end-line="252" selection-end-column="22" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -147,14 +157,14 @@
         <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/types/DataTypePrimitive.java" />
         <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/types/DataTypePrimitives.java" />
         <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/types/DataSerializer.java" />
-        <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/SHCMData.java" />
         <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/types/DataKeyedBlock.java" />
         <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/types/DataBlock.java" />
         <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/utils/Equality.java" />
         <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataBlock.java" />
         <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataSerializer.java" />
-        <option value="$PROJECT_DIR$/src/test/src/Test.java" />
+        <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/SHCMData.java" />
         <option value="$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java" />
+        <option value="$PROJECT_DIR$/src/test/src/Test.java" />
       </list>
     </option>
   </component>
@@ -332,7 +342,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32936078" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -358,42 +368,6 @@
           <line>40</line>
           <properties />
           <option name="timeStamp" value="26" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java</url>
-          <line>58</line>
-          <properties />
-          <option name="timeStamp" value="46" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java</url>
-          <line>134</line>
-          <properties />
-          <option name="timeStamp" value="47" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java</url>
-          <line>129</line>
-          <properties />
-          <option name="timeStamp" value="48" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java</url>
-          <line>123</line>
-          <properties />
-          <option name="timeStamp" value="49" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/utils/Equality.java</url>
-          <line>30</line>
-          <properties />
-          <option name="timeStamp" value="50" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java</url>
-          <line>66</line>
-          <properties />
-          <option name="timeStamp" value="53" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -506,13 +480,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/SHCMData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="41" selection-start-line="10" selection-start-column="41" selection-end-line="10" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_221/src.zip!/java/io/DataInputStream.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="168">
@@ -603,16 +570,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/src/Test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="34" selection-start-line="34" selection-end-line="34" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/utils/Equality.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
@@ -620,20 +577,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java">
+    <entry file="file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataSerializer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1300">
-          <caret line="101" column="56" lean-forward="true" selection-start-line="101" selection-start-column="56" selection-end-line="101" selection-end-column="56" />
+        <state relative-caret-position="4284">
+          <caret line="252" column="22" lean-forward="true" selection-start-line="252" selection-start-column="22" selection-end-line="252" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataSerializer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/framework/DataKeyedBlock.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-85">
-          <caret line="34" column="21" lean-forward="true" selection-start-line="34" selection-start-column="21" selection-end-line="34" selection-end-column="21" />
+        <state relative-caret-position="287">
+          <caret line="22" column="56" selection-start-line="22" selection-start-column="56" selection-end-line="22" selection-end-column="56" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/src/shcm/shsupercm/data/SHCMData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="3" lean-forward="true" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/src/Test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="26" column="8" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

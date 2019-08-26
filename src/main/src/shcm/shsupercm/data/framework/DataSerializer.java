@@ -33,6 +33,8 @@ public class DataSerializer {
             return 8;
         else if(object instanceof Double)
             return 9;
+        else if(object instanceof DataBlock[])
+            return -3;
         else if(object instanceof DataKeyedBlock[])
             return -2;
         else if(object instanceof String[])
@@ -98,6 +100,12 @@ public class DataSerializer {
         dataOut.writeDouble(value);
     }
 
+    public static void write(DataOutput dataOut, DataBlock[] values) throws IOException, UnknownDataTypeException {
+        dataOut.writeByte(-3);
+        dataOut.writeInt(values.length);
+        for(DataBlock value : values)
+            value.write(dataOut);
+    }
     public static void write(DataOutput dataOut, DataKeyedBlock[] values) throws IOException, UnknownDataTypeException {
         dataOut.writeByte(-2);
         dataOut.writeInt(values.length);
@@ -183,6 +191,8 @@ public class DataSerializer {
             write(dataOut, (Long) value);
         else if(value instanceof Double)
             write(dataOut, (Double) value);
+        else if(value instanceof DataBlock[])
+            write(dataOut, (DataBlock[]) value);
         else if(value instanceof DataKeyedBlock[])
             write(dataOut, (DataKeyedBlock[]) value);
         else if(value instanceof String[])
@@ -234,6 +244,12 @@ public class DataSerializer {
             case 9:
                 return dataIn.readDouble();
 
+            case -3: {
+                DataBlock[] values = new DataBlock[dataIn.readInt()];
+                for (int i = 0; i < values.length; i++)
+                    values[i] = (DataBlock) read((byte)-1, dataIn);
+                return values;
+            }
             case -2: {
                 DataKeyedBlock[] values = new DataKeyedBlock[dataIn.readInt()];
                 for (int i = 0; i < values.length; i++)
