@@ -11,41 +11,42 @@ import java.util.Set;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class DataKeyedBlock<K> {
     protected HashMap<K, Object> values = new HashMap<>();
-    private final K exampleKeyType;
+    private final Class<K> keyType;
 
-    public DataKeyedBlock(K exampleKeyType) {
-        assert !(exampleKeyType instanceof String);
-        this.exampleKeyType = exampleKeyType;
+    public DataKeyedBlock(Class<K> keyType) {
+        if(!keyType.equals(String.class))
+            throw new NonDataBlockStringKeyedBlockException();
+        this.keyType = keyType;
     }
 
-    //todo create custom no-constructor provider
-
-    //todo hold key type as class instead of example key
+    protected DataKeyedBlock() {
+        keyType = null;
+    }
 
     public DataKeyedBlock<K> set(K key, Object value) {
-        values.put(key, value);
+        this.values.put(key, value);
         return this;
     }
 
     public Object get(K key) {
-        return values.get(key);
+        return this.values.get(key);
     }
 
     public boolean isCorrectKeyType(Object key) {
-        return this.exampleKeyType.getClass().isInstance(key);
+        return this.keyType.isInstance(key);
     }
 
     public Set<K> getKeys() {
-        return values.keySet();
+        return this.values.keySet();
     }
 
     protected void write(DataOutput dataOut) throws IOException, DataSerializer.UnknownDataTypeException {
-        dataOut.writeByte(DataSerializer.getByteForType(exampleKeyType));
-        dataOut.writeInt(values.size());
-        if(!values.isEmpty()) {
-            for(K key : values.keySet()) {
+        dataOut.writeByte(DataSerializer.getByteForType(this.keyType));
+        dataOut.writeInt(this.values.size());
+        if(!this.values.isEmpty()) {
+            for(K key : this.values.keySet()) {
                 DataSerializer.write(dataOut, key);
-                DataSerializer.write(dataOut, values.get(key));
+                DataSerializer.write(dataOut, this.values.get(key));
             }
         }
     }
@@ -68,48 +69,48 @@ public class DataKeyedBlock<K> {
     private static DataKeyedBlock createKeyTypeBasedOnByte(byte type) throws DataSerializer.UnexpectedByteException {
         switch (type) {
             case -1:
-                return new DataKeyedBlock<DataKeyedBlock>(new DataKeyedBlock<>(null));
+                return new DataKeyedBlock<>(DataKeyedBlock.class);
             case 1:
                 return new DataBlock();
             case 2:
-                return new DataKeyedBlock<>(false);
+                return new DataKeyedBlock<>(Boolean.class);
             case 3:
-                return new DataKeyedBlock<>((byte)0);
+                return new DataKeyedBlock<>(Byte.class);
             case 4:
-                return new DataKeyedBlock<>((short)0);
+                return new DataKeyedBlock<>(Short.class);
             case 5:
-                return new DataKeyedBlock<>('\u0000');
+                return new DataKeyedBlock<>(Character.class);
             case 6:
-                return new DataKeyedBlock<>(0);
+                return new DataKeyedBlock<>(Integer.class);
             case 7:
-                return new DataKeyedBlock<>(0F);
+                return new DataKeyedBlock<>(Float.class);
             case 8:
-                return new DataKeyedBlock<>(0L);
+                return new DataKeyedBlock<>(Long.class);
             case 9:
-                return new DataKeyedBlock<>(0D);
+                return new DataKeyedBlock<>(Double.class);
 
             case -3:
-                return new DataKeyedBlock<>(new DataBlock[0]);
+                return new DataKeyedBlock<>(DataBlock[].class);
             case -2:
-                return new DataKeyedBlock<>(new DataKeyedBlock[0]);
+                return new DataKeyedBlock<>(DataKeyedBlock[].class);
             case 11:
-                return new DataKeyedBlock<>(new String[0]);
+                return new DataKeyedBlock<>(String[].class);
             case 12:
-                return new DataKeyedBlock<>(new boolean[0]);
+                return new DataKeyedBlock<>(boolean[].class);
             case 13:
-                return new DataKeyedBlock<>(new byte[0]);
+                return new DataKeyedBlock<>(byte[].class);
             case 14:
-                return new DataKeyedBlock<>(new short[0]);
+                return new DataKeyedBlock<>(short[].class);
             case 15:
-                return new DataKeyedBlock<>(new char[0]);
+                return new DataKeyedBlock<>(char[].class);
             case 16:
-                return new DataKeyedBlock<>(new int[0]);
+                return new DataKeyedBlock<>(int[].class);
             case 17:
-                return new DataKeyedBlock<>(new float[0]);
+                return new DataKeyedBlock<>(float[].class);
             case 18:
-                return new DataKeyedBlock<>(new long[0]);
+                return new DataKeyedBlock<>(long[].class);
             case 19:
-                return new DataKeyedBlock<>(new double[0]);
+                return new DataKeyedBlock<>(double[].class);
         }
 
         throw new DataSerializer.UnexpectedByteException();
@@ -139,4 +140,9 @@ public class DataKeyedBlock<K> {
             return false;
         }
     }
+
+    /**
+     * Thrown when constructing a {@link String}-keyed {@link DataKeyedBlock} instead of {@link DataBlock}.
+     */
+    public static class NonDataBlockStringKeyedBlockException extends RuntimeException {}
 }

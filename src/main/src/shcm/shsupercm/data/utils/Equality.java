@@ -2,7 +2,17 @@ package shcm.shsupercm.data.utils;
 
 import java.util.Arrays;
 
+/**
+ * Equality was made by SHsuperCM and is under no license.
+ * Feel free to use anywhere and without credit.
+ */
 public class Equality {
+    /**
+     * Checks if 2 objects are equal and takes array comparison as well as primitive array comparison into account.
+     * @param a first object
+     * @param b second object
+     * @return a is equal to b
+     */
     public static boolean areObjectsEqual(Object a, Object b) {
         if(a == b || a.equals(b))
             return true;

@@ -9,51 +9,51 @@ import java.io.IOException;
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class DataSerializer {
-    public static byte getByteForType(Object object) throws UnknownDataTypeException {
-        if(object == null)
+    public static byte getByteForType(Class<?> type) throws UnknownDataTypeException {
+        if(type == null)
             throw new NullPointerException();
 
-        if(object instanceof DataKeyedBlock)
+        if(type.equals(DataKeyedBlock.class))
             return -1;
-        else if(object instanceof String)
+        else if(type.equals(String.class))
             return 1;
-        else if(object instanceof Boolean)
+        else if(type.equals(Boolean.class))
             return 2;
-        else if(object instanceof Byte)
+        else if(type.equals(Byte.class))
             return 3;
-        else if(object instanceof Short)
+        else if(type.equals(Short.class))
             return 4;
-        else if(object instanceof Character)
+        else if(type.equals(Character.class))
             return 5;
-        else if(object instanceof Integer)
+        else if(type.equals(Integer.class))
             return 6;
-        else if(object instanceof Float)
+        else if(type.equals(Float.class))
             return 7;
-        else if(object instanceof Long)
+        else if(type.equals(Long.class))
             return 8;
-        else if(object instanceof Double)
+        else if(type.equals(Double.class))
             return 9;
-        else if(object instanceof DataBlock[])
+        else if(type.equals(DataBlock[].class))
             return -3;
-        else if(object instanceof DataKeyedBlock[])
+        else if(type.equals(DataKeyedBlock[].class))
             return -2;
-        else if(object instanceof String[])
+        else if(type.equals(String[].class))
             return 11;
-        else if(object instanceof boolean[])
+        else if(type.equals(boolean[].class))
             return 12;
-        else if(object instanceof byte[])
+        else if(type.equals(byte[].class))
             return 13;
-        else if(object instanceof short[])
+        else if(type.equals(short[].class))
             return 14;
-        else if(object instanceof char[])
+        else if(type.equals(char[].class))
             return 15;
-        else if(object instanceof int[])
+        else if(type.equals(int[].class))
             return 16;
-        else if(object instanceof float[])
+        else if(type.equals(float[].class))
             return 17;
-        else if(object instanceof long[])
+        else if(type.equals(long[].class))
             return 18;
-        else if(object instanceof double[])
+        else if(type.equals(double[].class))
             return 19;
 
         throw new UnknownDataTypeException();
