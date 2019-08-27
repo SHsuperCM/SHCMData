@@ -8,11 +8,43 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
+/**
+ * Simple data structure resembling a Map(and backed by a {@link HashMap}). <br>
+ * Note that the key types are limited! See {@link #keyType} for more details.
+ *
+ * @param <K> key type.
+ */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class DataKeyedBlock<K> {
+    /**
+     * Actual contents in runtime storage.
+     */
     protected HashMap<K, Object> values = new HashMap<>();
+
+    /**
+     * The data's type of keys.<br>
+     * To simplify things, this has a limited number of types.<br>
+     * The types are:
+     * <pre>
+     * • For a String-keyed block, see {@link DataBlock}.
+     * • All Object-wrapped primitives.
+     *     * Meaning that instead of boolean.class, use Boolean.class.
+     * • All primitive one-dimensional arrays.
+     *     * Primitive types only! Do not use Object-wrapped counterparts.
+     *       Meaning that instead of Boolean[].class, use boolean[].class.
+     * • DataBlock.
+     * • DataBlock[].
+     * • DataKeyedBlock.
+     * • DataKeyedBlock[].
+     * </pre>
+     */
     private final Class<K> keyType;
 
+    /**
+     * Constructs a DataKeyedBlock.
+     *
+     * @param keyType See {@link #keyType}.
+     */
     public DataKeyedBlock(Class<K> keyType) {
         if(!keyType.equals(String.class))
             throw new NonDataBlockStringKeyedBlockException();
@@ -23,19 +55,48 @@ public class DataKeyedBlock<K> {
         keyType = null;
     }
 
+    /**
+     * From {@link java.util.Map#put(Object, Object)}:<br>
+     * Associates the specified value with the specified key in this map (optional operation). If the map previously contained a mapping for the key, the old value is replaced by the specified value.
+     * @return this instance
+     */
     public DataKeyedBlock<K> set(K key, Object value) {
         this.values.put(key, value);
         return this;
     }
 
+    /**
+     * From {@link java.util.Map#get(Object)}:<br>
+     * Returns the value to which the specified key is mapped, or null if this map contains no mapping for the key.
+     * @param key the key whose associated value is to be returned
+     * @return the value to which the specified key is mapped.
+     */
     public Object get(K key) {
         return this.values.get(key);
     }
 
+    /**
+     * See {@link #get(Object)}.<br>
+     * Counting on the user of the method to know that the key is associated with a DataBlock-type value.
+     */
+    public DataBlock getBlock(K key) {
+        return (DataBlock) get(key);
+    }
+
+    /**
+     * Checks if the specified key is of the correct type to fit in this block.
+     * @param key the key to check.
+     * @return Indication if {@code} key is of the correct type.
+     */
     public boolean isCorrectKeyType(Object key) {
         return this.keyType.isInstance(key);
     }
 
+    /**
+     * From {@link java.util.Map#keySet()}:<br>
+     * Returns a Set view of the keys contained in this map. The set is backed by the map, so changes to the map are reflected in the set, and vice-versa.
+     * @return a set view of the keys contained in this map
+     */
     public Set<K> getKeys() {
         return this.values.keySet();
     }
@@ -114,10 +175,6 @@ public class DataKeyedBlock<K> {
         }
 
         throw new DataSerializer.UnexpectedByteException();
-    }
-
-    public DataBlock getBlock(K key) {
-        return (DataBlock) get(key);
     }
 
     @SuppressWarnings("unchecked")

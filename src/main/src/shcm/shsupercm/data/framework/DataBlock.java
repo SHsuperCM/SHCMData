@@ -4,7 +4,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * Default {@link DataKeyedBlock} with {@link String} key support.
+ * Default {@link DataKeyedBlock} with {@link String} key optimization.
  */
 public class DataBlock extends DataKeyedBlock<String> {
     public DataBlock() {}
