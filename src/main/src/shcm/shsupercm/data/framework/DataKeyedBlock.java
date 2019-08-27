@@ -88,6 +88,8 @@ public class DataKeyedBlock<K> {
             case 9:
                 return new DataKeyedBlock<>(0D);
 
+            case -3:
+                return new DataKeyedBlock<>(new DataBlock[0]);
             case -2:
                 return new DataKeyedBlock<>(new DataKeyedBlock[0]);
             case 11:
