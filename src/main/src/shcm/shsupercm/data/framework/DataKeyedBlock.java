@@ -46,7 +46,7 @@ public class DataKeyedBlock<K> {
      * @param keyType See {@link #keyType}.
      */
     public DataKeyedBlock(Class<K> keyType) {
-        if(!keyType.equals(String.class))
+        if(keyType.equals(String.class))
             throw new NonDataBlockStringKeyedBlockException();
         this.keyType = keyType;
     }
