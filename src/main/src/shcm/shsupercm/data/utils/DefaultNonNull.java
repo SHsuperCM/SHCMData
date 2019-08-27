@@ -2,7 +2,7 @@ package shcm.shsupercm.data.utils;
 
 /**
  * A simple generic value wrapper that defaults to another if null.
- * @param <T> Value Type
+ * @param <T> value type
  */
 public class DefaultNonNull<T> {
     /**
@@ -17,7 +17,7 @@ public class DefaultNonNull<T> {
     /**
      * Constructs a {@link DefaultNonNull} wrapper around the provided default value.
      *
-     * @param defaultValue The value to default to in case {@link #value} is null.
+     * @param defaultValue the value to default to in case {@link #value} is null.
      */
     public DefaultNonNull(T defaultValue) {
         this.defaultValue = defaultValue;
@@ -46,7 +46,7 @@ public class DefaultNonNull<T> {
     }
 
     /**
-     * @return Either the value or the default in case value is null.
+     * @return either the value or the default in case value is null.
      */
     public T get() {
         return isValueNull() ? getDefault() : this.value;

@@ -5,10 +5,16 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * The main serializer responsible for translating between raw data and understandable data.
+ * The main serializer responsible for translating between raw bytes and SHCMData.
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class DataSerializer {
+    /**
+     * Retrieves the id for the class type.
+     * @param type the class to work with.
+     * @return the id for the class type.
+     * @throws UnknownDataTypeException when there is no registered id for the specified class type.
+     */
     public static byte getByteForType(Class<?> type) throws UnknownDataTypeException {
         if(type == null)
             throw new NullPointerException();
@@ -59,107 +65,170 @@ public class DataSerializer {
         throw new UnknownDataTypeException();
     }
 
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, DataKeyedBlock value) throws IOException, UnknownDataTypeException {
         dataOut.writeByte(-1);
         value.write(dataOut);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, String value) throws IOException {
         dataOut.writeByte(1);
         dataOut.writeUTF(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, Boolean value) throws IOException {
         dataOut.writeByte(2);
         dataOut.writeBoolean(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, Byte value) throws IOException {
         dataOut.writeByte(3);
         dataOut.writeByte(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, Short value) throws IOException {
         dataOut.writeByte(4);
         dataOut.writeShort(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, Character value) throws IOException {
         dataOut.writeByte(5);
         dataOut.writeChar(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, Integer value) throws IOException {
         dataOut.writeByte(6);
         dataOut.writeInt(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, Float value) throws IOException {
         dataOut.writeByte(7);
         dataOut.writeFloat(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, Long value) throws IOException {
         dataOut.writeByte(8);
         dataOut.writeLong(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, Double value) throws IOException {
         dataOut.writeByte(9);
         dataOut.writeDouble(value);
     }
 
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, DataBlock[] values) throws IOException, UnknownDataTypeException {
         dataOut.writeByte(-3);
         dataOut.writeInt(values.length);
         for(DataBlock value : values)
             value.write(dataOut);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, DataKeyedBlock[] values) throws IOException, UnknownDataTypeException {
         dataOut.writeByte(-2);
         dataOut.writeInt(values.length);
         for(DataKeyedBlock value : values)
             value.write(dataOut);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, String[] values) throws IOException {
         dataOut.writeByte(11);
         dataOut.writeInt(values.length);
         for(String value : values)
             dataOut.writeUTF(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, boolean[] values) throws IOException {
         dataOut.writeByte(12);
         dataOut.writeInt(values.length);
         for(boolean value : values)
             dataOut.writeBoolean(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, byte[] values) throws IOException {
         dataOut.writeByte(13);
         dataOut.writeInt(values.length);
         for(byte value : values)
             dataOut.writeByte(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, short[] values) throws IOException {
         dataOut.writeByte(14);
         dataOut.writeInt(values.length);
         for(short value : values)
             dataOut.writeShort(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, char[] values) throws IOException {
         dataOut.writeByte(15);
         dataOut.writeInt(values.length);
         for(char value : values)
             dataOut.writeChar(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, int[] values) throws IOException {
         dataOut.writeByte(16);
         dataOut.writeInt(values.length);
         for(int value : values)
             dataOut.writeInt(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, float[] values) throws IOException {
         dataOut.writeByte(17);
         dataOut.writeInt(values.length);
         for(float value : values)
             dataOut.writeFloat(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, long[] values) throws IOException {
         dataOut.writeByte(18);
         dataOut.writeInt(values.length);
         for(long value : values)
             dataOut.writeLong(value);
     }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, double[] values) throws IOException {
         dataOut.writeByte(19);
         dataOut.writeInt(values.length);
@@ -167,6 +236,9 @@ public class DataSerializer {
             dataOut.writeDouble(value);
     }
 
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
     public static void write(DataOutput dataOut, Object value) throws UnknownDataTypeException, IOException {
         if(value == null)
             throw new NullPointerException();
@@ -217,10 +289,16 @@ public class DataSerializer {
             throw new UnknownDataTypeException();
     }
 
+    /**
+     * Identifies a data type(reading the first byte) and reads the object from {@code dataIn}.
+     */
     public static Object read(DataInput dataIn) throws IOException, UnexpectedByteException {
         return read(dataIn.readByte(), dataIn);
     }
 
+    /**
+     * Reads the object from {@code dataIn} based on a given data type.
+     */
     public static Object read(byte type, DataInput dataIn) throws IOException, UnexpectedByteException {
         switch (type) {
             case -1:
@@ -315,6 +393,13 @@ public class DataSerializer {
         throw new UnexpectedByteException();
     }
 
+    /**
+     * Thrown when an unexpected byte is encountered mid reading.
+     */
     public static class UnexpectedByteException extends Exception {}
+
+    /**
+     * Thrown when an unknown data type is trying to pass through serialization/deserialization.
+     */
     public static class UnknownDataTypeException extends Exception {}
 }

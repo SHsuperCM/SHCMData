@@ -3,7 +3,7 @@ package shcm.shsupercm.data.utils;
 import java.util.Arrays;
 
 /**
- * Equality was made by SHsuperCM and is under no license.
+ * Equality was made by SHsuperCM and is under the WTFPL-2.0 licence.( https://tldrlegal.com/license/do-wtf-you-want-to-public-license-v2-(wtfpl-2.0) )<br>
  * Feel free to use anywhere and without credit.
  */
 public class Equality {
