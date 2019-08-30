@@ -1,5 +1,8 @@
 package shcm.shsupercm.data.framework;
 
+import shcm.shsupercm.data.data.DataRegistry;
+import shcm.shsupercm.data.data.IData;
+
 import java.io.DataOutput;
 import java.io.IOException;
 
@@ -19,6 +22,12 @@ public class DataBlock extends DataKeyedBlock<String> {
                 DataSerializer.write(dataOut, values.get(key));
             }
         }
+    }
+
+    @Override
+    public DataBlock setData(String key, IData value) {
+        this.values.put(key, DataRegistry.write(new DataBlock(), value));
+        return this;
     }
 
     @Override

@@ -1,11 +1,14 @@
-package shcm.shsupercm.data.framework;
+package shcm.shsupercm.data.data;
 
+import shcm.shsupercm.data.framework.DataBlock;
 import shcm.shsupercm.data.utils.Equality;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class DataRegistry {
+    public static final String DATA_ID_IDENTIFIER = "shcmdata:data_id";
+
     /**
      * Actual registry.
      */
@@ -24,16 +27,19 @@ public class DataRegistry {
     }
 
     public static IData read(DataBlock datablock) {
-        return REGISTRY.get(new UniqueDataId((byte[]) datablock.get("shcmdata:data_id"))).read(datablock);
+        return REGISTRY.get(new UniqueDataId((byte[]) datablock.get(DATA_ID_IDENTIFIER))).read(datablock);
     }
 
-
+    public static DataBlock write(DataBlock dataBlock, IData data) {
+        dataBlock.set(DATA_ID_IDENTIFIER, data.dataTypeUID());
+        return data.write(dataBlock);
+    }
 
     /**
      * Simple "lambdaifyable" constructor for IData types.
      * @param <T> the IData type to build
      */
-    private static interface Builder<T extends IData> {
+    public interface Builder<T extends IData> {
         /**
          * Simple "lambdaifyable" constructor for T.
          * @return the new T instance.

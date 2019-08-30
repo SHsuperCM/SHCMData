@@ -1,5 +1,7 @@
 package shcm.shsupercm.data.framework;
 
+import shcm.shsupercm.data.data.DataRegistry;
+import shcm.shsupercm.data.data.IData;
 import shcm.shsupercm.data.utils.Equality;
 
 import java.io.DataInput;
@@ -56,12 +58,30 @@ public class DataKeyedBlock<K> {
     }
 
     /**
+     * Checks if a value is assigned to the specified key.
+     * @param key the search term for the associated value.
+     * @return indication if value exists
+     */
+    public boolean exists(K key) {
+        return this.values.get(key) != null;
+    }
+
+    /**
      * From {@link java.util.Map#put(Object, Object)}:<br>
      * Associates the specified value with the specified key in this map (optional operation). If the map previously contained a mapping for the key, the old value is replaced by the specified value.
      * @return this instance
      */
     public DataKeyedBlock<K> set(K key, Object value) {
         this.values.put(key, value);
+        return this;
+    }
+
+    /**
+     * See {@link #set(K, Object)}.<br>
+     * Writes the value as a {@link DataBlock}.
+     */
+    public DataKeyedBlock<K> setData(K key, IData value) {
+        this.values.put(key, DataRegistry.write(new DataBlock(), value));
         return this;
     }
 
@@ -73,6 +93,14 @@ public class DataKeyedBlock<K> {
      */
     public Object get(K key) {
         return this.values.get(key);
+    }
+
+    /**
+     * See {@link #get(Object)}.<br>
+     * Counting on the user of the method to know that the key is associated with an {@link IData}-type value.
+     */
+    public IData getData(K key) {
+        return DataRegistry.read((DataBlock) get(key));
     }
 
     /**

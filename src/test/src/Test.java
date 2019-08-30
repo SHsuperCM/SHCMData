@@ -1,3 +1,4 @@
+import shcm.shsupercm.data.data.DataRegistry;
 import shcm.shsupercm.data.framework.DataSerializer;
 import shcm.shsupercm.data.framework.DataBlock;
 import shcm.shsupercm.data.framework.DataKeyedBlock;
@@ -6,7 +7,12 @@ import java.io.*;
 import java.util.Arrays;
 
 public class Test {
+    static {
+        DataRegistry.register(WorldPos::new);
+    }
+
     public static void main(String[] args) throws IOException, DataSerializer.UnknownDataTypeException, DataSerializer.UnexpectedByteException {
+        WorldPos worldPos = new WorldPos(645, 63, -1346778);
         DataBlock original = new DataBlock()
             .set("where", new DataKeyedBlock<>(Character.class)
                 .set('x', -45)
@@ -24,9 +30,9 @@ public class Test {
                         .set("test5", 349086734096823L),
                     new DataBlock()
                         .set("test_with_byte_array", new byte[]{0,15,126,-15,-15,-15,-15,-15,84,-100,-5,57,31,44,20,1,0,0})
-                        .set("test_with_string_array", new String[]{"line1 text usually goes here", "next line is probably here"})
-                })
-            );
+                        .set("test_with_string_array", new String[]{"line1 text usually goes here", "next line is probably here"})})
+            )
+            .setData("worldposthing", worldPos);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataSerializer.write(new DataOutputStream(byteArrayOutputStream), original);
@@ -43,6 +49,7 @@ public class Test {
 
 
         int x = (int) ((DataKeyedBlock<Character>)deserialized.get("where")).get('x');
+        WorldPos pos2 = (WorldPos) deserialized.getData("worldposthing");
         System.out.println();
     }
 }

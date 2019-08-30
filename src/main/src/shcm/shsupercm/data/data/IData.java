@@ -1,4 +1,6 @@
-package shcm.shsupercm.data.framework;
+package shcm.shsupercm.data.data;
+
+import shcm.shsupercm.data.framework.DataBlock;
 
 /**
  * Makes the implementing class representable as a DataBlock.<br>
