@@ -1,3 +1,4 @@
+import shcm.shsupercm.data.data.DataAnnotationRegistry;
 import shcm.shsupercm.data.framework.DataSerializer;
 import shcm.shsupercm.data.framework.DataBlock;
 import shcm.shsupercm.data.framework.DataKeyedBlock;
@@ -8,7 +9,9 @@ import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) throws IOException, DataSerializer.UnknownDataTypeException, DataSerializer.UnexpectedByteException {
-        WorldPos worldPos = new WorldPos(645, 63, -1346778);
+        DataAnnotationRegistry.init();
+
+        WorldPos worldPos = new WorldPos(645, 63, -1346776);
         DataBlock original = new DataBlock()
             .set("where", new DataKeyedBlock<>(Character.class)
                 .set('x', -45)

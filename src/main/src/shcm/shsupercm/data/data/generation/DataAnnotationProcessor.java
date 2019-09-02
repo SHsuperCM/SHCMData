@@ -18,7 +18,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DataAnnotationProcessor extends AbstractProcessor {
-    private static final String generatedPackage = "shcm.shsupercm.data.data.generation";
+    public static final String GENERATED_CLASS_PACKAGE = "shcm.shsupercm.data.data.generation";
+    public static final String GENERATED_CLASS_NAME = "DataTypeHandler";
 
     private Messager messager;
 
@@ -41,7 +42,6 @@ public class DataAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public synchronized boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        //if(!roundEnv.processingOver()) return false;
         messager = processingEnv.getMessager();
         for (Element dataElement : roundEnv.getElementsAnnotatedWith(Data.class)) {
             if (dataElement.getKind() != ElementKind.CLASS) {
@@ -53,13 +53,11 @@ public class DataAnnotationProcessor extends AbstractProcessor {
 
                 Data dataAnnotation = dataElement.getAnnotation(Data.class);
 
-                String generatedClassName = "DataTypeHandler" + ++dataTypeNumber;
+                String generatedClassName = GENERATED_CLASS_NAME + ++dataTypeNumber;
                 String dataTypeCanonicalName = getCanonicalName(dataElement);
 
-                JavaFileObject dataTypeHandlerClass = processingEnv.getFiler().createSourceFile(generatedPackage + "." + generatedClassName, dataElement);
-                Writer writer = dataTypeHandlerClass.openWriter();
 
-                for (Element fieldElement : dataElement.getEnclosedElements()) {
+                /*for (Element fieldElement : dataElement.getEnclosedElements()) {
                     if(fieldElement.getAnnotation(Data.Ignore.class) == null) {
                         String fieldName = fieldElement.getSimpleName().toString();
                         String name = fieldName;
@@ -68,30 +66,44 @@ public class DataAnnotationProcessor extends AbstractProcessor {
                             name = nameAnnotation.value();
 
                     }
-                }
-                Element enclosing = dataElement;
-                while (enclosing.getKind() != ElementKind.PACKAGE) {
-                    enclosing = enclosing.getEnclosingElement();
-                }
-                PackageElement packageElement = (PackageElement) enclosing;
+                }*/
 
-                writer.append("package " + generatedPackage + ";\n");
+                JavaFileObject dataTypeHandlerClass = processingEnv.getFiler().createSourceFile(GENERATED_CLASS_PACKAGE + "." + generatedClassName, dataElement);
+                Writer writer = dataTypeHandlerClass.openWriter();
+
+                writer.append("package " + GENERATED_CLASS_PACKAGE + ";\n");
                 writer.append("public class " + generatedClassName + " extends " + DataAnnotationRegistry.DataTypeHandler.class.getCanonicalName() + "<" + dataTypeCanonicalName + "> {\n");
-                writer.append("    @Override public Class<" + dataTypeCanonicalName + "> getType() { return " + dataTypeCanonicalName + ".class; }\n");
-                writer.append("    @Override public byte[] dataTypeUID() { return new byte[]" + Arrays.toString(dataAnnotation.value()).replace('[','{').replace(']','}') + "; }\n");
+                writer.append("    public Class<" + dataTypeCanonicalName + "> getType() { return " + dataTypeCanonicalName + ".class; }\n");
+                writer.append("    public " + dataTypeCanonicalName + " newT() { return new " + dataTypeCanonicalName + "(); }\n");
+                writer.append("    public byte[] dataTypeUID() { return new byte[]" + Arrays.toString(dataAnnotation.value()).replace('[','{').replace(']','}') + "; }\n");
+                writer.append("    public shcm.shsupercm.data.framework.DataBlock write(shcm.shsupercm.data.framework.DataBlock dataBlock) {\n");
+
+                writer.append("        return dataBlock;\n");
+                writer.append("    }\n");
+                writer.append("    public shcm.shsupercm.data.data.IData read(shcm.shsupercm.data.framework.DataBlock dataBlock) {\n");
+                writer.append("        " + dataTypeCanonicalName + " data = new " + dataTypeCanonicalName + "();\n");
+
+                writer.append("        return data;\n");
+                writer.append("    }\n");
                 writer.append("}");
                 writer.close();
             } catch (IOException e) {
+                messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                 e.printStackTrace();
-                return true;
+                return false;
             }
         }
         return true;
     }
 
     private String getCanonicalName(Element element) {
-        if(element == null)
-            return "";
-        return getCanonicalName(element.getEnclosingElement()) + (element.getKind() == ElementKind.PACKAGE ? (((PackageElement) element).getQualifiedName()) : "." + element.getSimpleName());
+        StringBuilder name = new StringBuilder(element.getKind() == ElementKind.PACKAGE ? ((PackageElement) element).getQualifiedName().toString() : element.getSimpleName().toString());
+
+        Element e = element;
+        while((e = e.getEnclosingElement()) != null) {
+            name.insert(0, (e.getKind() == ElementKind.PACKAGE ? ((PackageElement) e).getQualifiedName().toString() : e.getSimpleName().toString()) + ".");
+        }
+
+        return name.toString();
     }
 }

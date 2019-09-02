@@ -3,7 +3,7 @@ package shcm.shsupercm.testing;
 import shcm.shsupercm.data.data.IData;
 import shcm.shsupercm.data.data.annotations.Data;
 
-@Data({0, 15, -26})
+@Data({0, 15, -25})
 public class WorldPos implements IData {
     public int posX;
     public int posY;
