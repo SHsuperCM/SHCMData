@@ -14,20 +14,26 @@ public interface IData {
      * Something important to note is that DataRegistry expects the id to be consistent for its class, upon removal of a data type it is best practice to not use the empty id that is left behind.
      * @return this IData's unique id.
      */
-    byte[] dataTypeUID();
+    default byte[] dataTypeUID() {
+        return DataAnnotationRegistry.getID(getClass());
+    }
 
     /**
      * Writes this object into a DataBlock(overwriting existing data within the DataBlock).
      * @param dataBlock the DataBlock to write on top of.
      * @return the DataBlock representation of the object.
      */
-    DataBlock write(DataBlock dataBlock);
+    default DataBlock write(DataBlock dataBlock) {
+        return DataAnnotationRegistry.write(getClass(), dataBlock);
+    }
 
     /**
      * Reads a DataBlock into this object(overwriting existing data within the object).
      * @param dataBlock the DataBlock representation of the object.
      * @return this IData
      */
-    IData read(DataBlock dataBlock);
+    default IData read(DataBlock dataBlock) {
+        return DataAnnotationRegistry.read(dataBlock);
+    }
 }
 

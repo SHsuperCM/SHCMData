@@ -1,16 +1,12 @@
-import shcm.shsupercm.data.data.DataRegistry;
 import shcm.shsupercm.data.framework.DataSerializer;
 import shcm.shsupercm.data.framework.DataBlock;
 import shcm.shsupercm.data.framework.DataKeyedBlock;
+import shcm.shsupercm.testing.WorldPos;
 
 import java.io.*;
 import java.util.Arrays;
 
 public class Test {
-    static {
-        DataRegistry.register(WorldPos::new);
-    }
-
     public static void main(String[] args) throws IOException, DataSerializer.UnknownDataTypeException, DataSerializer.UnexpectedByteException {
         WorldPos worldPos = new WorldPos(645, 63, -1346778);
         DataBlock original = new DataBlock()
