@@ -11,7 +11,13 @@ public class DataAnnotationRegistry {
     private static final Map<byte[], Class<? extends IData>> ID_CLASS_REGISTRY = new HashMap<>();
     private static boolean initialized = false;
 
-    public static void init() {
+    /**
+     * Will register all generated data handler(generated using {@link shcm.shsupercm.data.data.annotations.Data})
+     * TODO CLEAN IF FORCED
+     */
+    public static void init(boolean force) {
+        if(!force && initialized)
+            return;
         long dataTypeNumber = -1;
         while (true) {
             try {

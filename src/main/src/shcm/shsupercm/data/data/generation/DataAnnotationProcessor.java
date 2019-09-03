@@ -5,17 +5,12 @@ import shcm.shsupercm.data.data.annotations.Data;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class DataAnnotationProcessor extends AbstractProcessor {
     public static final String GENERATED_CLASS_PACKAGE = "shcm.shsupercm.data.data.generation";
@@ -40,6 +35,7 @@ public class DataAnnotationProcessor extends AbstractProcessor {
         return SourceVersion.latestSupported();
     }
 
+    @SuppressWarnings({"StringConcatenationInsideStringBufferAppend"})
     @Override
     public synchronized boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         messager = processingEnv.getMessager();
@@ -56,33 +52,30 @@ public class DataAnnotationProcessor extends AbstractProcessor {
                 String generatedClassName = GENERATED_CLASS_NAME + ++dataTypeNumber;
                 String dataTypeCanonicalName = getCanonicalName(dataElement);
 
+                List<FieldEntry> dataFields = new ArrayList<>();
 
-                /*for (Element fieldElement : dataElement.getEnclosedElements()) {
-                    if(fieldElement.getAnnotation(Data.Ignore.class) == null) {
-                        String fieldName = fieldElement.getSimpleName().toString();
-                        String name = fieldName;
-                        Data.Name nameAnnotation = fieldElement.getAnnotation(Data.Name.class);
-                        if(nameAnnotation != null)
-                            name = nameAnnotation.value();
-
-                    }
-                }*/
+                for (Element fieldElement : dataElement.getEnclosedElements())
+                    if (fieldElement.getKind() == ElementKind.FIELD && !fieldElement.getModifiers().contains(Modifier.FINAL) && fieldElement.getAnnotation(Data.Ignore.class) == null)
+                        dataFields.add(new FieldEntry(fieldElement));
 
                 JavaFileObject dataTypeHandlerClass = processingEnv.getFiler().createSourceFile(GENERATED_CLASS_PACKAGE + "." + generatedClassName, dataElement);
                 Writer writer = dataTypeHandlerClass.openWriter();
 
                 writer.append("package " + GENERATED_CLASS_PACKAGE + ";\n");
+                writer.append("import shcm.shsupercm.data.framework.DataBlock;\n");
                 writer.append("public class " + generatedClassName + " extends " + DataAnnotationRegistry.DataTypeHandler.class.getCanonicalName() + "<" + dataTypeCanonicalName + "> {\n");
                 writer.append("    public Class<" + dataTypeCanonicalName + "> getType() { return " + dataTypeCanonicalName + ".class; }\n");
                 writer.append("    public " + dataTypeCanonicalName + " newT() { return new " + dataTypeCanonicalName + "(); }\n");
                 writer.append("    public byte[] dataTypeUID() { return new byte[]" + Arrays.toString(dataAnnotation.value()).replace('[','{').replace(']','}') + "; }\n");
-                writer.append("    public shcm.shsupercm.data.framework.DataBlock write(shcm.shsupercm.data.framework.DataBlock dataBlock) {\n");
-
+                writer.append("    public DataBlock write(DataBlock dataBlock) {\n");
+                for (FieldEntry dataField : dataFields)
+                    dataField.write(writer);
                 writer.append("        return dataBlock;\n");
                 writer.append("    }\n");
-                writer.append("    public shcm.shsupercm.data.data.IData read(shcm.shsupercm.data.framework.DataBlock dataBlock) {\n");
-                writer.append("        " + dataTypeCanonicalName + " data = new " + dataTypeCanonicalName + "();\n");
-
+                writer.append("    public shcm.shsupercm.data.data.IData read(DataBlock dataBlock) {\n");
+                writer.append("        " + dataTypeCanonicalName + " data = newT();\n");
+                for (FieldEntry dataField : dataFields)
+                    dataField.read(writer);
                 writer.append("        return data;\n");
                 writer.append("    }\n");
                 writer.append("}");
@@ -105,5 +98,44 @@ public class DataAnnotationProcessor extends AbstractProcessor {
         }
 
         return name.toString();
+    }
+
+    @SuppressWarnings({"unused","FieldCanBeLocal"})
+    private static class FieldEntry {
+        private final String fieldName, dataName, getter, setter;
+        private final Element fieldElement;
+        private final boolean isPublic;
+
+        FieldEntry(Element fieldElement) {
+            this.fieldElement = fieldElement;
+
+            fieldName = fieldElement.getSimpleName().toString();
+            Data.Name nameAnnotation = fieldElement.getAnnotation(Data.Name.class);
+            if(nameAnnotation == null)
+                dataName = fieldName;
+            else
+                dataName = nameAnnotation.value();
+
+            isPublic = fieldElement.getModifiers().contains(Modifier.PUBLIC);
+
+            Data.Access fieldAccess = fieldElement.getAnnotation(Data.Access.class);
+            if(fieldAccess == null) {
+                if(!isPublic)
+                    throw new RuntimeException();
+                getter = null;
+                setter = null;
+            } else {
+                getter = fieldAccess.getter();
+                setter = fieldAccess.setter();
+            }
+        }
+        //get value and write to datablock
+        void write(Writer writer) {
+
+        }
+        //set value from datablock
+        void read(Writer writer) {
+
+        }
     }
 }

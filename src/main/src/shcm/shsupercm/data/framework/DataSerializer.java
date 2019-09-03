@@ -9,6 +9,9 @@ import java.io.IOException;
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class DataSerializer {
+
+    //Write IDatas in here instead of DataKeyedBlock
+    //Also run DataAnnotationRegistry if it hasn't ran already
     /**
      * Retrieves the id for the class type.
      * @param type the class to work with.

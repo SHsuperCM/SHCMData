@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) throws IOException, DataSerializer.UnknownDataTypeException, DataSerializer.UnexpectedByteException {
-        DataAnnotationRegistry.init();
+        DataAnnotationRegistry.init(false);
 
         WorldPos worldPos = new WorldPos(645, 63, -1346776);
         DataBlock original = new DataBlock()

@@ -19,4 +19,11 @@ public @interface Data {
     @interface Name {
         String value();
     }
+
+    @Retention(RetentionPolicy.CLASS)
+    @Target(ElementType.FIELD)
+    @interface Access {
+        String getter();
+        String setter();
+    }
 }
