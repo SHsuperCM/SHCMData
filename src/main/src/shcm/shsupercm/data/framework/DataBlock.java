@@ -25,12 +25,6 @@ public class DataBlock extends DataKeyedBlock<String> {
     }
 
     @Override
-    public DataBlock setData(String key, IData value) {
-        this.values.put(key, DataRegistry.write(new DataBlock(), value));
-        return this;
-    }
-
-    @Override
     public boolean isCorrectKeyType(Object key) {
         return key instanceof String;
     }

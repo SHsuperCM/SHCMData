@@ -1,4 +1,5 @@
 import shcm.shsupercm.data.data.DataAnnotationRegistry;
+import shcm.shsupercm.data.data.DataRegistry;
 import shcm.shsupercm.data.framework.DataSerializer;
 import shcm.shsupercm.data.framework.DataBlock;
 import shcm.shsupercm.data.framework.DataKeyedBlock;
@@ -31,7 +32,7 @@ public class Test {
                         .set("test_with_byte_array", new byte[]{0,15,126,-15,-15,-15,-15,-15,84,-100,-5,57,31,44,20,1,0,0})
                         .set("test_with_string_array", new String[]{"line1 text usually goes here", "next line is probably here"})})
             )
-            .setData("worldposthing", worldPos);
+            .set("worldposthing", worldPos);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataSerializer.write(new DataOutputStream(byteArrayOutputStream), original);
@@ -43,12 +44,10 @@ public class Test {
         DataSerializer.write(new DataOutputStream(byteArrayOutputStream2), deserialized);
         byte[] bytes2 = byteArrayOutputStream2.toByteArray();
 
-        assert original.equals(deserialized);
-        assert Arrays.equals(bytes,bytes2);
-
+        assert original.equals(deserialized) && Arrays.equals(bytes, bytes2);
 
         int x = (int) ((DataKeyedBlock<Character>)deserialized.get("where")).get('x');
-        WorldPos pos2 = (WorldPos) deserialized.getData("worldposthing");
+        WorldPos pos2 = (WorldPos) deserialized.get("worldposthing");
         System.out.println();
     }
 }

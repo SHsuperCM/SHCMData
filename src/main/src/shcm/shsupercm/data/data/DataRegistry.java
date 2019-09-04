@@ -18,6 +18,10 @@ public class DataRegistry {
         REGISTRY.put(new UniqueDataId(builder.newT().dataTypeUID()), builder);
     }
 
+    protected static void remove(UniqueDataId id) {
+        REGISTRY.remove(id);
+    }
+
     public static IData create(byte[] id) {
         return REGISTRY.get(new UniqueDataId(id)).newT();
     }
@@ -60,7 +64,7 @@ public class DataRegistry {
     /**
      * A HashMap-safe wrapper for byte array data id.
      */
-    private static final class UniqueDataId {
+    protected static final class UniqueDataId {
         /**
          * Actual value.
          */

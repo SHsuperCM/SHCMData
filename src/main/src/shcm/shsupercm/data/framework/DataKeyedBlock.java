@@ -77,15 +77,6 @@ public class DataKeyedBlock<K> {
     }
 
     /**
-     * See {@link #set(K, Object)}.<br>
-     * Writes the value as a {@link DataBlock}.
-     */
-    public DataKeyedBlock<K> setData(K key, IData value) {
-        this.values.put(key, DataRegistry.write(new DataBlock(), value));
-        return this;
-    }
-
-    /**
      * From {@link java.util.Map#get(Object)}:<br>
      * Returns the value to which the specified key is mapped, or null if this map contains no mapping for the key.
      * @param key the key whose associated value is to be returned
@@ -93,14 +84,6 @@ public class DataKeyedBlock<K> {
      */
     public Object get(K key) {
         return this.values.get(key);
-    }
-
-    /**
-     * See {@link #get(Object)}.<br>
-     * Counting on the user of the method to know that the key is associated with an {@link IData}-type value.
-     */
-    public IData getData(K key) {
-        return DataRegistry.read((DataBlock) get(key));
     }
 
     /**
@@ -152,6 +135,7 @@ public class DataKeyedBlock<K> {
             Object value = DataSerializer.read(dataIn);
             dataKeyedBlock.set(key, value);
         }
+
         return dataKeyedBlock;
     }
 

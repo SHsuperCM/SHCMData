@@ -121,7 +121,7 @@ public class DataAnnotationProcessor extends AbstractProcessor {
             Data.Access fieldAccess = fieldElement.getAnnotation(Data.Access.class);
             if(fieldAccess == null) {
                 if(!isPublic)
-                    throw new RuntimeException();
+                    throw new RuntimeException();//todo
                 getter = null;
                 setter = null;
             } else {
@@ -129,11 +129,11 @@ public class DataAnnotationProcessor extends AbstractProcessor {
                 setter = fieldAccess.setter();
             }
         }
-        //get value and write to datablock
+        //get value and write to datablock todo
         void write(Writer writer) {
 
         }
-        //set value from datablock
+        //set value from datablock todo
         void read(Writer writer) {
 
         }

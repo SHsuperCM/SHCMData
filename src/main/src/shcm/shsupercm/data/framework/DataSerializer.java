@@ -1,5 +1,8 @@
 package shcm.shsupercm.data.framework;
 
+import shcm.shsupercm.data.data.DataRegistry;
+import shcm.shsupercm.data.data.IData;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -22,48 +25,55 @@ public class DataSerializer {
         if(type == null)
             throw new NullPointerException();
 
-        if(type.equals(DataKeyedBlock.class))
-            return -1;
-        else if(type.equals(String.class))
-            return 1;
-        else if(type.equals(Boolean.class))
-            return 2;
-        else if(type.equals(Byte.class))
-            return 3;
-        else if(type.equals(Short.class))
-            return 4;
-        else if(type.equals(Character.class))
-            return 5;
-        else if(type.equals(Integer.class))
-            return 6;
-        else if(type.equals(Float.class))
-            return 7;
-        else if(type.equals(Long.class))
-            return 8;
-        else if(type.equals(Double.class))
-            return 9;
-        else if(type.equals(DataBlock[].class))
-            return -3;
-        else if(type.equals(DataKeyedBlock[].class))
-            return -2;
-        else if(type.equals(String[].class))
-            return 11;
-        else if(type.equals(boolean[].class))
-            return 12;
-        else if(type.equals(byte[].class))
-            return 13;
-        else if(type.equals(short[].class))
-            return 14;
-        else if(type.equals(char[].class))
-            return 15;
-        else if(type.equals(int[].class))
-            return 16;
-        else if(type.equals(float[].class))
-            return 17;
-        else if(type.equals(long[].class))
-            return 18;
-        else if(type.equals(double[].class))
-            return 19;
+        if(!type.isArray()) {
+            if (type.equals(DataKeyedBlock.class))
+                return -1;
+            else if (type.equals(String.class))
+                return 1;
+            else if (type.equals(Boolean.class))
+                return 2;
+            else if (type.equals(Byte.class))
+                return 3;
+            else if (type.equals(Short.class))
+                return 4;
+            else if (type.equals(Character.class))
+                return 5;
+            else if (type.equals(Integer.class))
+                return 6;
+            else if (type.equals(Float.class))
+                return 7;
+            else if (type.equals(Long.class))
+                return 8;
+            else if (type.equals(Double.class))
+                return 9;
+            else if (IData.class.isAssignableFrom(type))
+                return -1;
+        } else {
+            if (type.equals(DataBlock[].class))
+                return -3;
+            else if (type.equals(DataKeyedBlock[].class))
+                return -2;
+            else if (type.equals(String[].class))
+                return 11;
+            else if (type.equals(boolean[].class))
+                return 12;
+            else if (type.equals(byte[].class))
+                return 13;
+            else if (type.equals(short[].class))
+                return 14;
+            else if (type.equals(char[].class))
+                return 15;
+            else if (type.equals(int[].class))
+                return 16;
+            else if (type.equals(float[].class))
+                return 17;
+            else if (type.equals(long[].class))
+                return 18;
+            else if (type.equals(double[].class))
+                return 19;
+            else if (IData.class.isAssignableFrom(type.getComponentType()))
+                return -3;
+        }
 
         throw new UnknownDataTypeException();
     }
@@ -74,6 +84,12 @@ public class DataSerializer {
     public static void write(DataOutput dataOut, DataKeyedBlock value) throws IOException, UnknownDataTypeException {
         dataOut.writeByte(-1);
         value.write(dataOut);
+    }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
+    public static void write(DataOutput dataOut, IData value) throws IOException, UnknownDataTypeException {
+        write(dataOut, DataRegistry.write(new DataBlock(), value));
     }
     /**
      * Writes {@code value} to {@code dataOut} along with its id.
@@ -147,6 +163,15 @@ public class DataSerializer {
         dataOut.writeInt(values.length);
         for(DataBlock value : values)
             value.write(dataOut);
+    }
+    /**
+     * Writes {@code value} to {@code dataOut} along with its id.
+     */
+    public static void write(DataOutput dataOut, IData[] values) throws IOException, UnknownDataTypeException {
+        dataOut.writeByte(-3);
+        dataOut.writeInt(values.length);
+        for(IData value : values)
+            value.write(DataRegistry.write(new DataBlock(), value));
     }
     /**
      * Writes {@code value} to {@code dataOut} along with its id.
@@ -288,6 +313,10 @@ public class DataSerializer {
             write(dataOut, (long[]) value);
         else if(value instanceof double[])
             write(dataOut, (double[]) value);
+        else if(value instanceof IData)
+            write(dataOut, (IData) value);
+        else if(value instanceof IData[])
+            write(dataOut, (IData[]) value);//todo test if array components work with instanceof
         else
             throw new UnknownDataTypeException();
     }
@@ -305,7 +334,13 @@ public class DataSerializer {
     public static Object read(byte type, DataInput dataIn) throws IOException, UnexpectedByteException {
         switch (type) {
             case -1:
-                return DataKeyedBlock.read(dataIn);
+                DataKeyedBlock object = DataKeyedBlock.read(dataIn);
+
+                //test for IData
+                if(object instanceof DataBlock && ((DataBlock)object).get(DataRegistry.DATA_ID_IDENTIFIER) != null)
+                    return DataRegistry.read((DataBlock) object);
+
+                return object;
             case 1:
                 return dataIn.readUTF();
             case 2:

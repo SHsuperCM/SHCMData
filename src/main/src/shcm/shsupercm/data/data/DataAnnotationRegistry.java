@@ -8,16 +8,27 @@ import java.util.Map;
 
 public class DataAnnotationRegistry {
     private static final Map<Class<? extends IData>, DataTypeHandler> REGISTRY = new HashMap<>();
-    private static final Map<byte[], Class<? extends IData>> ID_CLASS_REGISTRY = new HashMap<>();
+    private static final Map<DataRegistry.UniqueDataId, Class<? extends IData>> ID_CLASS_REGISTRY = new HashMap<>();
     private static boolean initialized = false;
 
     /**
-     * Will register all generated data handler(generated using {@link shcm.shsupercm.data.data.annotations.Data})
-     * TODO CLEAN IF FORCED
+     * Will register all data handlers(generated using {@link shcm.shsupercm.data.data.annotations.Data})
      */
-    public static void init(boolean force) {
-        if(!force && initialized)
-            return;
+    public static synchronized void init(boolean force) {
+        if(initialized) {
+            if (!force)
+                return;
+            else {
+                for (DataRegistry.UniqueDataId id : ID_CLASS_REGISTRY.keySet()) {
+                    DataRegistry.remove(id);
+                }
+                REGISTRY.clear();
+                ID_CLASS_REGISTRY.clear();
+            }
+        }
+
+        initialized = true;
+
         long dataTypeNumber = -1;
         while (true) {
             try {
@@ -28,25 +39,26 @@ public class DataAnnotationRegistry {
                 e.printStackTrace();
             }
         }
-
-        initialized = true;
     }
 
-    protected static void register(DataTypeHandler<?> handler) {
+    private static void register(DataTypeHandler<?> handler) {
         REGISTRY.put(handler.getType(), handler);
-        ID_CLASS_REGISTRY.put(handler.dataTypeUID(), handler.getType());
+        ID_CLASS_REGISTRY.put(new DataRegistry.UniqueDataId(handler.dataTypeUID()), handler.getType());
         DataRegistry.register(new DataRegistryBuilder<>(handler));
     }
 
     public static DataBlock write(Class<? extends IData> type, DataBlock dataBlock) {
+        init(false);
         return REGISTRY.get(type).write(dataBlock);
     }
 
     public static IData read(DataBlock dataBlock) {
-        return REGISTRY.get(ID_CLASS_REGISTRY.get(dataBlock.get(DataRegistry.DATA_ID_IDENTIFIER))).read(dataBlock);
+        init(false);
+        return REGISTRY.get(ID_CLASS_REGISTRY.get(new DataRegistry.UniqueDataId((byte[]) dataBlock.get(DataRegistry.DATA_ID_IDENTIFIER)))).read(dataBlock);
     }
 
     public static byte[] getID(Class<? extends IData> type) {
+        init(false);
         return REGISTRY.get(type).dataTypeUID();
     }
 
@@ -76,7 +88,7 @@ public class DataAnnotationRegistry {
 
         @Override
         public T read(DataBlock dataBlock) {
-            return (T) handler.read(dataBlock);
+            return (T) newT().read(dataBlock);
         }
     }
 }
