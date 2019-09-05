@@ -72,7 +72,10 @@ public class DataKeyedBlock<K> {
      * @return this instance
      */
     public DataKeyedBlock<K> set(K key, Object value) {
-        this.values.put(key, value);
+        if (value == null)
+            this.remove(key);
+        else
+            this.values.put(key, value);
         return this;
     }
 
@@ -84,6 +87,15 @@ public class DataKeyedBlock<K> {
      */
     public Object get(K key) {
         return this.values.get(key);
+    }
+
+    /**
+     * From {@link java.util.Map#remove(Object)}:<br>
+     * Removes the mapping for a key from this map if it is present.
+     * @param key the key whose associated value should be removed.
+     */
+    public void remove(K key) {
+        this.values.remove(key);
     }
 
     /**

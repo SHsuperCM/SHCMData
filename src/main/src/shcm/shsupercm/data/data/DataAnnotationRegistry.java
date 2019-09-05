@@ -47,9 +47,9 @@ public class DataAnnotationRegistry {
         DataRegistry.register(new DataRegistryBuilder<>(handler));
     }
 
-    public static DataBlock write(Class<? extends IData> type, DataBlock dataBlock) {
+    public static DataBlock write(Class<? extends IData> type, DataBlock dataBlock, IData data) {
         init(false);
-        return REGISTRY.get(type).write(dataBlock);
+        return REGISTRY.get(type).write(dataBlock, data);
     }
 
     public static IData read(DataBlock dataBlock) {
@@ -69,7 +69,7 @@ public class DataAnnotationRegistry {
 
         public abstract byte[] dataTypeUID();
 
-        public abstract DataBlock write(DataBlock dataBlock);
+        public abstract DataBlock write(DataBlock dataBlock, T data);
 
         public abstract IData read(DataBlock dataBlock);
     }

@@ -1,5 +1,6 @@
 import shcm.shsupercm.data.data.DataAnnotationRegistry;
 import shcm.shsupercm.data.data.DataRegistry;
+import shcm.shsupercm.data.data.IData;
 import shcm.shsupercm.data.framework.DataSerializer;
 import shcm.shsupercm.data.framework.DataBlock;
 import shcm.shsupercm.data.framework.DataKeyedBlock;
@@ -12,12 +13,12 @@ public class Test {
     public static void main(String[] args) throws IOException, DataSerializer.UnknownDataTypeException, DataSerializer.UnexpectedByteException {
         DataAnnotationRegistry.init(false);
 
-        WorldPos worldPos = new WorldPos(645, 63, -1346776);
         DataBlock original = new DataBlock()
             .set("where", new DataKeyedBlock<>(Character.class)
                 .set('x', -45)
                 .set('y', 53)
-                .set('z', 23))
+                .set('z', 23)
+            )
             .set("what", "Just a thing, nothing really important tbh...")
             .set("byte_shit", new byte[]{0,48,-18,34,127,0,0,88,34,34,34,34,15,1})
             .set("storage", new DataBlock()
@@ -30,9 +31,10 @@ public class Test {
                         .set("test5", 349086734096823L),
                     new DataBlock()
                         .set("test_with_byte_array", new byte[]{0,15,126,-15,-15,-15,-15,-15,84,-100,-5,57,31,44,20,1,0,0})
-                        .set("test_with_string_array", new String[]{"line1 text usually goes here", "next line is probably here"})})
+                        .set("test_with_string_array", new String[]{"line1 text usually goes here", "next line is probably here"})
+                })
             )
-            .set("worldposthing", worldPos);
+            .set("worldposthing", new WorldPos(645, 63, -1346776));
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DataSerializer.write(new DataOutputStream(byteArrayOutputStream), original);
@@ -44,10 +46,10 @@ public class Test {
         DataSerializer.write(new DataOutputStream(byteArrayOutputStream2), deserialized);
         byte[] bytes2 = byteArrayOutputStream2.toByteArray();
 
-        assert original.equals(deserialized) && Arrays.equals(bytes, bytes2);
-
+        assert Arrays.equals(bytes, bytes2);
+        assert original.equals(deserialized);
         int x = (int) ((DataKeyedBlock<Character>)deserialized.get("where")).get('x');
         WorldPos pos2 = (WorldPos) deserialized.get("worldposthing");
-        System.out.println();
+        assert false;
     }
 }

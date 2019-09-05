@@ -24,7 +24,7 @@ public interface IData {
      * @return the DataBlock representation of the object.
      */
     default DataBlock write(DataBlock dataBlock) {
-        return DataAnnotationRegistry.write(getClass(), dataBlock);
+        return DataAnnotationRegistry.write(getClass(), dataBlock, this);
     }
 
     /**

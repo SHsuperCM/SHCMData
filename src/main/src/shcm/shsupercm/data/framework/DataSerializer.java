@@ -269,7 +269,7 @@ public class DataSerializer {
      */
     public static void write(DataOutput dataOut, Object value) throws UnknownDataTypeException, IOException {
         if(value == null)
-            throw new NullPointerException();
+            return;
 
         if(value instanceof DataKeyedBlock)
             write(dataOut, (DataKeyedBlock) value);

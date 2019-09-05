@@ -35,7 +35,6 @@ public class DataAnnotationProcessor extends AbstractProcessor {
         return SourceVersion.latestSupported();
     }
 
-    @SuppressWarnings({"StringConcatenationInsideStringBufferAppend"})
     @Override
     public synchronized boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         messager = processingEnv.getMessager();
@@ -63,17 +62,19 @@ public class DataAnnotationProcessor extends AbstractProcessor {
 
                 writer.append("package " + GENERATED_CLASS_PACKAGE + ";\n");
                 writer.append("import shcm.shsupercm.data.framework.DataBlock;\n");
-                writer.append("public class " + generatedClassName + " extends " + DataAnnotationRegistry.DataTypeHandler.class.getCanonicalName() + "<" + dataTypeCanonicalName + "> {\n");
-                writer.append("    public Class<" + dataTypeCanonicalName + "> getType() { return " + dataTypeCanonicalName + ".class; }\n");
-                writer.append("    public " + dataTypeCanonicalName + " newT() { return new " + dataTypeCanonicalName + "(); }\n");
-                writer.append("    public byte[] dataTypeUID() { return new byte[]" + Arrays.toString(dataAnnotation.value()).replace('[','{').replace(']','}') + "; }\n");
-                writer.append("    public DataBlock write(DataBlock dataBlock) {\n");
+                writer.append("import shcm.shsupercm.data.data.IData;\n");
+                writer.append("import shcm.shsupercm.data.data.DataAnnotationRegistry.DataTypeHandler;\n");
+                writer.append("public class ").append(generatedClassName).append(" extends DataTypeHandler<").append(dataTypeCanonicalName).append("> {\n");
+                writer.append("    public Class<").append(dataTypeCanonicalName).append("> getType() { return ").append(dataTypeCanonicalName).append(".class; }\n");
+                writer.append("    public ").append(dataTypeCanonicalName).append(" newT() { return new ").append(dataTypeCanonicalName).append("(); }\n");
+                writer.append("    public byte[] dataTypeUID() { return new byte[]").append(Arrays.toString(dataAnnotation.value()).replace('[', '{').replace(']', '}')).append("; }\n");
+                writer.append("    public DataBlock write(DataBlock dataBlock, ").append(dataTypeCanonicalName).append(" data) {\n");
                 for (FieldEntry dataField : dataFields)
                     dataField.write(writer);
                 writer.append("        return dataBlock;\n");
                 writer.append("    }\n");
-                writer.append("    public shcm.shsupercm.data.data.IData read(DataBlock dataBlock) {\n");
-                writer.append("        " + dataTypeCanonicalName + " data = newT();\n");
+                writer.append("    public IData read(DataBlock dataBlock) {\n");
+                writer.append("        ").append(dataTypeCanonicalName).append(" data = newT();\n");
                 for (FieldEntry dataField : dataFields)
                     dataField.read(writer);
                 writer.append("        return data;\n");
@@ -102,12 +103,14 @@ public class DataAnnotationProcessor extends AbstractProcessor {
 
     @SuppressWarnings({"unused","FieldCanBeLocal"})
     private static class FieldEntry {
-        private final String fieldName, dataName, getter, setter;
         private final Element fieldElement;
+        private final String fieldName, dataName, getter, setter, fieldType;
         private final boolean isPublic;
 
         FieldEntry(Element fieldElement) {
             this.fieldElement = fieldElement;
+
+            fieldType = fieldElement.asType().toString();
 
             fieldName = fieldElement.getSimpleName().toString();
             Data.Name nameAnnotation = fieldElement.getAnnotation(Data.Name.class);
@@ -120,22 +123,34 @@ public class DataAnnotationProcessor extends AbstractProcessor {
 
             Data.Access fieldAccess = fieldElement.getAnnotation(Data.Access.class);
             if(fieldAccess == null) {
-                if(!isPublic)
-                    throw new RuntimeException();//todo
-                getter = null;
-                setter = null;
+                if(!isPublic) {
+                    String etField = "et" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                    getter = 'g' + etField;
+                    setter = 's' + etField;
+                } else {
+                    getter = null;
+                    setter = null;
+                }
             } else {
                 getter = fieldAccess.getter();
                 setter = fieldAccess.setter();
             }
         }
-        //get value and write to datablock todo
-        void write(Writer writer) {
-
+        void write(Writer writer) throws IOException {
+            writer.append("        dataBlock.set(\"").append(dataName).append("\", data.");
+            if(getter == null)
+                writer.append(fieldName);
+            else
+                writer.append(getter).append("()");
+            writer.append(");\n");
         }
-        //set value from datablock todo
-        void read(Writer writer) {
-
+        void read(Writer writer) throws IOException {
+            writer.append("        if (dataBlock.exists(\"").append(dataName).append("\")) data.");
+            if(setter == null)
+                writer.append(fieldName).append(" = (").append(fieldType).append(") dataBlock.get(\"").append(dataName).append("\")");
+            else
+                writer.append(setter).append("((").append(fieldType).append(") dataBlock.get(\"").append(dataName).append("\"))");
+            writer.append(";\n");
         }
     }
 }
