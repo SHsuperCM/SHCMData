@@ -31,13 +31,8 @@ public class DataKeyedBlock<K> {
      * • For a String-keyed block, see {@link DataBlock}.
      * • All Object-wrapped primitives.
      *     * Meaning that instead of boolean.class, use Boolean.class.
-     * • All primitive one-dimensional arrays.
-     *     * Primitive types only! Do not use Object-wrapped counterparts.
-     *       Meaning that instead of Boolean[].class, use boolean[].class.
      * • DataBlock.
-     * • DataBlock[].
      * • DataKeyedBlock.
-     * • DataKeyedBlock[].
      * </pre>
      */
     private final Class<K> keyType;
@@ -153,8 +148,6 @@ public class DataKeyedBlock<K> {
 
     private static DataKeyedBlock createKeyTypeBasedOnByte(byte type) throws DataSerializer.UnexpectedByteException {
         switch (type) {
-            case -1:
-                return new DataKeyedBlock<>(DataKeyedBlock.class);
             case 1:
                 return new DataBlock();
             case 2:
@@ -174,28 +167,6 @@ public class DataKeyedBlock<K> {
             case 9:
                 return new DataKeyedBlock<>(Double.class);
 
-            case -3:
-                return new DataKeyedBlock<>(DataBlock[].class);
-            case -2:
-                return new DataKeyedBlock<>(DataKeyedBlock[].class);
-            case 11:
-                return new DataKeyedBlock<>(String[].class);
-            case 12:
-                return new DataKeyedBlock<>(boolean[].class);
-            case 13:
-                return new DataKeyedBlock<>(byte[].class);
-            case 14:
-                return new DataKeyedBlock<>(short[].class);
-            case 15:
-                return new DataKeyedBlock<>(char[].class);
-            case 16:
-                return new DataKeyedBlock<>(int[].class);
-            case 17:
-                return new DataKeyedBlock<>(float[].class);
-            case 18:
-                return new DataKeyedBlock<>(long[].class);
-            case 19:
-                return new DataKeyedBlock<>(double[].class);
         }
 
         throw new DataSerializer.UnexpectedByteException();

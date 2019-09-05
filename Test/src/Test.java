@@ -33,6 +33,12 @@ public class Test {
                         .set("test_with_byte_array", new byte[]{0,15,126,-15,-15,-15,-15,-15,84,-100,-5,57,31,44,20,1,0,0})
                         .set("test_with_string_array", new String[]{"line1 text usually goes here", "next line is probably here"})
                 })
+                .set("idata_array_testing", new IData[] {
+                    new WorldPos(1, 15, 38),
+                    new WorldPos(Integer.MAX_VALUE, 183, -5000),
+                    new WorldPos(1355542, 26111110, 2754896),
+                    new WorldPos(0, 14, -1)
+                })
             )
             .set("worldposthing", new WorldPos(645, 63, -1346776));
 
@@ -48,8 +54,9 @@ public class Test {
 
         assert Arrays.equals(bytes, bytes2);
         assert original.equals(deserialized);
+
         int x = (int) ((DataKeyedBlock<Character>)deserialized.get("where")).get('x');
         WorldPos pos2 = (WorldPos) deserialized.get("worldposthing");
-        assert false;
+        assert false;//ALL SHOULD BE GOOD HERE!
     }
 }

@@ -6,15 +6,13 @@ import shcm.shsupercm.data.data.IData;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * The main serializer responsible for translating between raw bytes and SHCMData.
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class DataSerializer {
-
-    //Write IDatas in here instead of DataKeyedBlock
-    //Also run DataAnnotationRegistry if it hasn't ran already
     /**
      * Retrieves the id for the class type.
      * @param type the class to work with.
@@ -159,6 +157,7 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, DataBlock[] values) throws IOException, UnknownDataTypeException {
+        if(values.length == 0) return;
         dataOut.writeByte(-3);
         dataOut.writeInt(values.length);
         for(DataBlock value : values)
@@ -168,15 +167,17 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, IData[] values) throws IOException, UnknownDataTypeException {
+        if(values.length == 0) return;
         dataOut.writeByte(-3);
         dataOut.writeInt(values.length);
         for(IData value : values)
-            value.write(DataRegistry.write(new DataBlock(), value));
+            DataRegistry.write(new DataBlock(), value).write(dataOut);
     }
     /**
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, DataKeyedBlock[] values) throws IOException, UnknownDataTypeException {
+        if(values.length == 0) return;
         dataOut.writeByte(-2);
         dataOut.writeInt(values.length);
         for(DataKeyedBlock value : values)
@@ -186,6 +187,7 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, String[] values) throws IOException {
+        if(values.length == 0) return;
         dataOut.writeByte(11);
         dataOut.writeInt(values.length);
         for(String value : values)
@@ -195,6 +197,7 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, boolean[] values) throws IOException {
+        if(values.length == 0) return;
         dataOut.writeByte(12);
         dataOut.writeInt(values.length);
         for(boolean value : values)
@@ -204,6 +207,7 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, byte[] values) throws IOException {
+        if(values.length == 0) return;
         dataOut.writeByte(13);
         dataOut.writeInt(values.length);
         for(byte value : values)
@@ -213,6 +217,7 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, short[] values) throws IOException {
+        if(values.length == 0) return;
         dataOut.writeByte(14);
         dataOut.writeInt(values.length);
         for(short value : values)
@@ -222,6 +227,7 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, char[] values) throws IOException {
+        if(values.length == 0) return;
         dataOut.writeByte(15);
         dataOut.writeInt(values.length);
         for(char value : values)
@@ -231,6 +237,7 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, int[] values) throws IOException {
+        if(values.length == 0) return;
         dataOut.writeByte(16);
         dataOut.writeInt(values.length);
         for(int value : values)
@@ -240,6 +247,7 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, float[] values) throws IOException {
+        if(values.length == 0) return;
         dataOut.writeByte(17);
         dataOut.writeInt(values.length);
         for(float value : values)
@@ -249,6 +257,7 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, long[] values) throws IOException {
+        if(values.length == 0) return;
         dataOut.writeByte(18);
         dataOut.writeInt(values.length);
         for(long value : values)
@@ -258,6 +267,7 @@ public class DataSerializer {
      * Writes {@code value} to {@code dataOut} along with its id.
      */
     public static void write(DataOutput dataOut, double[] values) throws IOException {
+        if(values.length == 0) return;
         dataOut.writeByte(19);
         dataOut.writeInt(values.length);
         for(double value : values)
@@ -336,8 +346,7 @@ public class DataSerializer {
             case -1:
                 DataKeyedBlock object = DataKeyedBlock.read(dataIn);
 
-                //test for IData
-                if(object instanceof DataBlock && ((DataBlock)object).get(DataRegistry.DATA_ID_IDENTIFIER) != null)
+                if(object instanceof DataBlock && ((DataBlock)object).exists(DataRegistry.DATA_ID_IDENTIFIER))
                     return DataRegistry.read((DataBlock) object);
 
                 return object;
@@ -361,10 +370,12 @@ public class DataSerializer {
                 return dataIn.readDouble();
 
             case -3: {
-                DataBlock[] values = new DataBlock[dataIn.readInt()];
-                for (int i = 0; i < values.length; i++)
-                    values[i] = (DataBlock) read((byte)-1, dataIn);
-                return values;
+                Object[] values = new Object[dataIn.readInt()];
+                for (int i = 0; i < values.length; i++) {
+                    values[i] = read((byte) -1, dataIn);
+                }
+
+                return Arrays.copyOf(values, values.length, values[0].getClass().equals(DataBlock.class) ? DataBlock[].class : IData[].class);
             }
             case -2: {
                 DataKeyedBlock[] values = new DataKeyedBlock[dataIn.readInt()];
