@@ -31,8 +31,6 @@ public class DataKeyedBlock<K> {
      * • For a String-keyed block, see {@link DataBlock}.
      * • All Object-wrapped primitives.
      *     * Meaning that instead of boolean.class, use Boolean.class.
-     * • DataBlock.
-     * • DataKeyedBlock.
      * </pre>
      */
     private final Class<K> keyType;
@@ -119,6 +117,10 @@ public class DataKeyedBlock<K> {
         return this.values.keySet();
     }
 
+    /**
+     * Writes this block into the data stream.
+     * @param dataOut the stream to write this block into.
+     */
     protected void write(DataOutput dataOut) throws IOException, DataSerializer.UnknownDataTypeException {
         dataOut.writeByte(DataSerializer.getByteForType(this.keyType));
         dataOut.writeInt(this.values.size());
@@ -130,6 +132,11 @@ public class DataKeyedBlock<K> {
         }
     }
 
+    /**
+     * Read a new DataKeyedBlock from the data stream.
+     * @param dataIn the stream to read from.
+     * @return the read DataKeyedBlock.
+     */
     @SuppressWarnings("unchecked")
     protected static DataKeyedBlock read(DataInput dataIn) throws IOException, DataSerializer.UnexpectedByteException {
         byte keyType = dataIn.readByte();
@@ -146,6 +153,12 @@ public class DataKeyedBlock<K> {
         return dataKeyedBlock;
     }
 
+    /**
+     * Creates a new DataKeyedBlock with the type that's associated with the type id.
+     * @param type the type id.
+     * @return a new DataKeyedBlock.
+     * @throws DataSerializer.UnexpectedByteException if the type cannot be made into a key type for DataKeyedBlock.
+     */
     private static DataKeyedBlock createKeyTypeBasedOnByte(byte type) throws DataSerializer.UnexpectedByteException {
         switch (type) {
             case 1:

@@ -1,4 +1,4 @@
 package shcm.shsupercm.data.utils;
 
-public class ZipUtils {
+public class CompressionUtils {
 }

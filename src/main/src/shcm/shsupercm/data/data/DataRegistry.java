@@ -6,41 +6,79 @@ import shcm.shsupercm.data.utils.Equality;
 import java.util.Arrays;
 import java.util.HashMap;
 
+/**
+ * Handles the registry for {@link IData} types.
+ */
 public class DataRegistry {
-    public static final String DATA_ID_IDENTIFIER = "shcmdata:data_id";
+    public static final String DATA_ID_IDENTIFIER = "shcmdid";
 
     /**
      * Actual registry.
      */
     private static final HashMap<UniqueDataId, Builder> REGISTRY = new HashMap<>();
 
+    /**
+     * Registers the builder for the {@link IData} type.
+     * @param builder the builder for the {@link IData} type(made to be used with a lambda method reference to the {@link IData}'s default constructor).
+     */
     public static void register(Builder<?> builder) {
         REGISTRY.put(new UniqueDataId(builder.newT().dataTypeUID()), builder);
     }
 
+    /**
+     * Removes the builder associated with the given id.
+     * @param id the id whose associated builder should be removed.
+     */
     protected static void remove(UniqueDataId id) {
         REGISTRY.remove(id);
     }
 
+    /**
+     * Constructs a new {@link IData} instance based on the id.
+     * @param id the id of the {@link IData} type.
+     * @return the new {@link IData} instance.
+     */
     public static IData create(byte[] id) {
+        DataAnnotationRegistry.init(false);
         return REGISTRY.get(new UniqueDataId(id)).newT();
     }
 
+    /**
+     * Constructs a new {@link IData} instance based on the id and reads the data block into it.
+     * @param id the id of the {@link IData} type.
+     * @param datablock the data block to read into the new {@link IData}.
+     * @return the new {@link IData} instance.
+     */
     public static IData read(byte[] id, DataBlock datablock) {
+        DataAnnotationRegistry.init(false);
         return REGISTRY.get(new UniqueDataId(id)).read(datablock);
     }
 
+    /**
+     * Constructs a new {@link IData} instance based on the id that is stored within the data block and reads the data block into it.
+     * @param datablock the data block to read into the new {@link IData}.
+     * @return the new {@link IData} instance.
+     */
     public static IData read(DataBlock datablock) {
+        DataAnnotationRegistry.init(false);
         return REGISTRY.get(new UniqueDataId((byte[]) datablock.get(DATA_ID_IDENTIFIER))).read(datablock);
     }
 
+    /**
+     * Writes the data into the data block along with its id.
+     * @param dataBlock the data block to write to.
+     * @param data the data to write into the data block.
+     * @return the data block containing the written data({@code dataBlock}).
+     */
     public static DataBlock write(DataBlock dataBlock, IData data) {
+        DataAnnotationRegistry.init(false);
         dataBlock.set(DATA_ID_IDENTIFIER, data.dataTypeUID());
         return data.write(dataBlock);
     }
 
     /**
-     * Simple "lambdaifyable" constructor for IData types.
+     * Simple "lambdaifyable" constructor for IData types.<br>
+     * Made to be used from an {@link IData}'s default constructor method reference.
      * @param <T> the IData type to build
      */
     public interface Builder<T extends IData> {

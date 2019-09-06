@@ -154,7 +154,7 @@ public class DataSerializer {
     }
 
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, DataBlock[] values) throws IOException, UnknownDataTypeException {
         if(values.length == 0) return;
@@ -164,7 +164,7 @@ public class DataSerializer {
             value.write(dataOut);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, IData[] values) throws IOException, UnknownDataTypeException {
         if(values.length == 0) return;
@@ -174,7 +174,7 @@ public class DataSerializer {
             DataRegistry.write(new DataBlock(), value).write(dataOut);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, DataKeyedBlock[] values) throws IOException, UnknownDataTypeException {
         if(values.length == 0) return;
@@ -184,7 +184,7 @@ public class DataSerializer {
             value.write(dataOut);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, String[] values) throws IOException {
         if(values.length == 0) return;
@@ -194,7 +194,7 @@ public class DataSerializer {
             dataOut.writeUTF(value);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, boolean[] values) throws IOException {
         if(values.length == 0) return;
@@ -204,7 +204,7 @@ public class DataSerializer {
             dataOut.writeBoolean(value);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, byte[] values) throws IOException {
         if(values.length == 0) return;
@@ -214,7 +214,7 @@ public class DataSerializer {
             dataOut.writeByte(value);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, short[] values) throws IOException {
         if(values.length == 0) return;
@@ -224,7 +224,7 @@ public class DataSerializer {
             dataOut.writeShort(value);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, char[] values) throws IOException {
         if(values.length == 0) return;
@@ -234,7 +234,7 @@ public class DataSerializer {
             dataOut.writeChar(value);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, int[] values) throws IOException {
         if(values.length == 0) return;
@@ -244,7 +244,7 @@ public class DataSerializer {
             dataOut.writeInt(value);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, float[] values) throws IOException {
         if(values.length == 0) return;
@@ -254,7 +254,7 @@ public class DataSerializer {
             dataOut.writeFloat(value);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, long[] values) throws IOException {
         if(values.length == 0) return;
@@ -264,7 +264,7 @@ public class DataSerializer {
             dataOut.writeLong(value);
     }
     /**
-     * Writes {@code value} to {@code dataOut} along with its id.
+     * Writes {@code values} to {@code dataOut} along with their id.
      */
     public static void write(DataOutput dataOut, double[] values) throws IOException {
         if(values.length == 0) return;
@@ -326,7 +326,7 @@ public class DataSerializer {
         else if(value instanceof IData)
             write(dataOut, (IData) value);
         else if(value instanceof IData[])
-            write(dataOut, (IData[]) value);//todo test if array components work with instanceof
+            write(dataOut, (IData[]) value);
         else
             throw new UnknownDataTypeException();
     }
@@ -443,7 +443,7 @@ public class DataSerializer {
     }
 
     /**
-     * Thrown when an unexpected byte is encountered mid reading.
+     * Thrown when an unexpected byte is encountered whilst reading.
      */
     public static class UnexpectedByteException extends Exception {}
 

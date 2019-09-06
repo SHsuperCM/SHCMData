@@ -1,8 +1,5 @@
 package shcm.shsupercm.data.framework;
 
-import shcm.shsupercm.data.data.DataRegistry;
-import shcm.shsupercm.data.data.IData;
-
 import java.io.DataOutput;
 import java.io.IOException;
 

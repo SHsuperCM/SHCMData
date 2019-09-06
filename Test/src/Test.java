@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) throws IOException, DataSerializer.UnknownDataTypeException, DataSerializer.UnexpectedByteException {
-        DataAnnotationRegistry.init(false);
+        //DataAnnotationRegistry.init(false);
 
         DataBlock original = new DataBlock()
             .set("where", new DataKeyedBlock<>(Character.class)
@@ -57,6 +57,7 @@ public class Test {
 
         int x = (int) ((DataKeyedBlock<Character>)deserialized.get("where")).get('x');
         WorldPos pos2 = (WorldPos) deserialized.get("worldposthing");
+        WorldPos pos3 = (WorldPos) ((IData[])deserialized.getBlock("storage").get("idata_array_testing"))[1];
         assert false;//ALL SHOULD BE GOOD HERE!
     }
 }
