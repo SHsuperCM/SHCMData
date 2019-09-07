@@ -10,31 +10,35 @@ import java.util.zip.GZIPOutputStream;
  * Handles compression and decompression along with serialization and deserialization.
  */
 public abstract class CompressionUtils {
+    /**
+     * Serialization and deserialization is done without any compression.
+     */
     public static final CompressionUtils NONE = new CompressionUtils() {
+        @Override
         public byte[] serialize(Object object) throws Exception {
             byte[] bytesOut;
             try(ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 DataOutputStream dos = new DataOutputStream(bos)) {
                 DataSerializer.write(dos, object);
                 bytesOut = bos.toByteArray();
-            } catch (IOException | DataSerializer.UnknownDataTypeException e) {
-                throw e;
             }
             return bytesOut;
         }
 
+        @Override
         public Object deserialize(byte[] bytesIn) throws Exception {
             Object readObject;
             try(ByteArrayInputStream bis = new ByteArrayInputStream(bytesIn);
                 DataInputStream dis = new DataInputStream(bis)) {
                 readObject = DataSerializer.read(dis);
-            } catch (IOException | DataSerializer.UnexpectedByteException e) {
-                throw e;
             }
             return readObject;
         }
     };
 
+    /**
+     * Compression is done using java's GZip stream algorithms.
+     */
     public static final CompressionUtils GZIP = new CompressionUtils() {
         /**
          * Written by Vladislav Kysliy.
@@ -72,31 +76,41 @@ public abstract class CompressionUtils {
             return result;
         }
 
+        @Override
         public byte[] serialize(Object object) throws Exception {
             byte[] bytesOut;
             try(ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 DataOutputStream dos = new DataOutputStream(bos)) {
                 DataSerializer.write(dos, object);
                 bytesOut = bos.toByteArray();
-            } catch (IOException | DataSerializer.UnknownDataTypeException e) {
-                throw e;
             }
             return gzipCompress(bytesOut);
         }
 
+        @Override
         public Object deserialize(byte[] bytesIn) throws Exception {
             Object readObject;
             try(ByteArrayInputStream bis = new ByteArrayInputStream(gzipUncompress(bytesIn));
                 DataInputStream dis = new DataInputStream(bis)) {
                 readObject = DataSerializer.read(dis);
-            } catch (IOException | DataSerializer.UnexpectedByteException e) {
-                throw e;
             }
             return readObject;
         }
     };
 
+    /**
+     * Serializes the given object into a byte array using the compression algorithm.
+     *
+     * @param object the object to serialize.
+     * @return the bytes of the object.
+     */
     public abstract byte[] serialize(Object object) throws Exception;
 
+    /**
+     * Deserializes the given byte array into an object using the decompression algorithm.
+     *
+     * @param bytesIn the bytes of the object
+     * @return the deserialized object.
+     */
     public abstract Object deserialize(byte[] bytesIn) throws Exception;
 }
