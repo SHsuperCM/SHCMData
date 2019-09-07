@@ -3,6 +3,7 @@ package shcm.shsupercm.data.utils;
 import shcm.shsupercm.data.framework.DataSerializer;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -113,4 +114,28 @@ public abstract class CompressionUtils {
      * @return the deserialized object.
      */
     public abstract Object deserialize(byte[] bytesIn) throws Exception;
+
+    /**
+     * Serializes the given object to file using the compression algorithm.
+     *
+     * @param object the object to serialize into file.
+     * @param file the file to write
+     */
+    public void serializeFile(Object object, File file) throws Exception {
+        if(file.exists()) return;
+
+        Files.write(file.toPath(), serialize(object));
+    }
+
+    /**
+     * Deserialize the file into an object using the decompression algorithm.
+     *
+     * @param file the file to deserialize from.
+     * @return the deserialized object.
+     */
+    public Object deserializeFile(File file) throws Exception {
+        if(!file.exists()) throw new FileNotFoundException();
+
+        return deserialize(Files.readAllBytes(file.toPath()));
+    }
 }
