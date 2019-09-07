@@ -4,14 +4,17 @@ import shcm.shsupercm.data.data.IData;
 import shcm.shsupercm.data.framework.DataSerializer;
 import shcm.shsupercm.data.framework.DataBlock;
 import shcm.shsupercm.data.framework.DataKeyedBlock;
+import shcm.shsupercm.data.utils.CompressionUtils;
 import shcm.shsupercm.testing.WorldPos;
 
 import java.io.*;
 import java.util.Arrays;
 
 public class Test {
-    public static void main(String[] args) throws IOException, DataSerializer.UnknownDataTypeException, DataSerializer.UnexpectedByteException {
+    public static void main(String[] args) throws Exception {
         //DataAnnotationRegistry.init(false);
+
+        CompressionUtils compression = CompressionUtils.GZIP;
 
         DataBlock original = new DataBlock()
             .set("where", new DataKeyedBlock<>(Character.class)
@@ -33,7 +36,7 @@ public class Test {
                         .set("test_with_byte_array", new byte[]{0,15,126,-15,-15,-15,-15,-15,84,-100,-5,57,31,44,20,1,0,0})
                         .set("test_with_string_array", new String[]{"line1 text usually goes here", "next line is probably here"})
                 })
-                .set("idata_array_testing", new IData[] {
+                .set("idata_array_testing", new WorldPos[] {
                     new WorldPos(1, 15, 38),
                     new WorldPos(Integer.MAX_VALUE, 183, -5000),
                     new WorldPos(1355542, 26111110, 2754896),
@@ -42,15 +45,11 @@ public class Test {
             )
             .set("worldposthing", new WorldPos(645, 63, -1346776));
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        DataSerializer.write(new DataOutputStream(byteArrayOutputStream), original);
-        byte[] bytes = byteArrayOutputStream.toByteArray();
+        byte[] bytes = compression.serialize(original);
 
-        DataBlock deserialized = (DataBlock) DataSerializer.read(new DataInputStream(new ByteArrayInputStream(bytes)));
+        DataBlock deserialized = (DataBlock) compression.deserialize(bytes);
 
-        ByteArrayOutputStream byteArrayOutputStream2 = new ByteArrayOutputStream();
-        DataSerializer.write(new DataOutputStream(byteArrayOutputStream2), deserialized);
-        byte[] bytes2 = byteArrayOutputStream2.toByteArray();
+        byte[] bytes2 = compression.serialize(deserialized);
 
         assert Arrays.equals(bytes, bytes2);
         assert original.equals(deserialized);

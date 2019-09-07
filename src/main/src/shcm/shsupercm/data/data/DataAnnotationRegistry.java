@@ -95,7 +95,6 @@ public class DataAnnotationRegistry {
      * @return the id for the data type.
      */
     public static byte[] getID(Class<? extends IData> type) {
-        init(false);
         return REGISTRY.get(type).dataTypeUID();
     }
 
