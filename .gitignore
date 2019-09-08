@@ -1,4 +1,7 @@
 out/
 .idea/
+.gradle/
 generated/
 release/
+build/
+gradle/
