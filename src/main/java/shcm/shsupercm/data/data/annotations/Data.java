@@ -58,4 +58,32 @@ public @interface Data {
          */
         String setter();
     }
+
+    /**
+     * Defines that the field contains an enum type.
+     */
+    @Retention(RetentionPolicy.CLASS)
+    @Target(ElementType.FIELD)
+    @interface Enum {
+        /**
+         * Defines how the enum value should be stored.
+         */
+        Method value() default Method.NAME;
+
+        /**
+         * Methods for how the enum value should be stored.
+         */
+        enum Method {
+            /**
+             * Defines that the enum values should be stored as their ordinal position(integer index).<br>
+             * Serializes & deserializes faster and weighs less than {@link #NAME}.
+             */
+            ORDINAL,
+            /**
+             * Defines that the enum values should be stored as their name(string name).<br>
+             * More reliable than {@link #ORDINAL}.
+             */
+            NAME
+        }
+    }
 }

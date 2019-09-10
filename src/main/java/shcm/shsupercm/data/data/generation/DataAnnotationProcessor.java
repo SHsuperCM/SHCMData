@@ -51,8 +51,6 @@ public class DataAnnotationProcessor extends AbstractProcessor {
                 return true;
             }
             try {
-
-
                 Data dataAnnotation = dataElement.getAnnotation(Data.class);
 
                 String generatedClassName = GENERATED_CLASS_NAME + ++dataTypeNumber;
@@ -146,37 +144,50 @@ public class DataAnnotationProcessor extends AbstractProcessor {
          */
         private final String fieldType;
         /**
+         * If non null, defines the field type as enum and defines storage solution.
+         */
+        private final Data.Enum.Method enumMethod;
+        /**
          * Is the field public.
          */
         private final boolean isPublic;
 
+        /**
+         * Processes the field into a field entry.
+         */
         FieldEntry(Element fieldElement) {
             this.fieldElement = fieldElement;
 
-            fieldType = fieldElement.asType().toString();
+            this.fieldType = fieldElement.asType().toString();
 
-            fieldName = fieldElement.getSimpleName().toString();
+            this.fieldName = fieldElement.getSimpleName().toString();
             Data.Name nameAnnotation = fieldElement.getAnnotation(Data.Name.class);
             if(nameAnnotation == null)
-                dataName = fieldName;
+                this.dataName = this.fieldName;
             else
-                dataName = nameAnnotation.value();
+                this.dataName = nameAnnotation.value();
 
-            isPublic = fieldElement.getModifiers().contains(Modifier.PUBLIC);
+            this.isPublic = fieldElement.getModifiers().contains(Modifier.PUBLIC);
+
+            Data.Enum enumMethod = fieldElement.getAnnotation(Data.Enum.class);
+            if(enumMethod == null)
+                this.enumMethod = null;
+            else
+                this.enumMethod = enumMethod.value();
 
             Data.Access fieldAccess = fieldElement.getAnnotation(Data.Access.class);
             if(fieldAccess == null) {
-                if(!isPublic) {
-                    String etField = "et" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                    getter = 'g' + etField;
-                    setter = 's' + etField;
+                if(!this.isPublic) {
+                    String etField = "et" + this.fieldName.substring(0, 1).toUpperCase() + this.fieldName.substring(1);
+                    this.getter = 'g' + etField;
+                    this.setter = 's' + etField;
                 } else {
-                    getter = null;
-                    setter = null;
+                    this.getter = null;
+                    this.setter = null;
                 }
             } else {
-                getter = fieldAccess.getter();
-                setter = fieldAccess.setter();
+                this.getter = fieldAccess.getter();
+                this.setter = fieldAccess.setter();
             }
         }
 
@@ -184,12 +195,30 @@ public class DataAnnotationProcessor extends AbstractProcessor {
          * Writes the line of the field into the "write" method.
          */
         void write(Writer writer) throws IOException {
-            writer.append("        dataBlock.set(\"").append(dataName).append("\", data.");
-            if(getter == null)
-                writer.append(fieldName);
-            else
-                writer.append(getter).append("()");
+            writer.append("        ");
+            if(enumMethod != null) {
+                writer.append("if (");
+                writeValue(writer);
+                writer.append(" != null) ");
+            }
+            writer.append("dataBlock.set(\"").append(dataName).append("\", ");
+            writeValue(writer);
+            if(enumMethod == Data.Enum.Method.NAME)
+                writer.append(".name()");
+            if(enumMethod == Data.Enum.Method.ORDINAL)
+                writer.append(".ordinal()");
             writer.append(");\n");
+        }
+
+        /**
+         * Appends the {@link IData} field value reference.
+         */
+        void writeValue(Writer writer) throws IOException {
+            writer.append("data.");
+            if(this.getter == null)
+                writer.append(this.fieldName);
+            else
+                writer.append(this.getter).append("()");
         }
 
         /**
@@ -197,11 +226,29 @@ public class DataAnnotationProcessor extends AbstractProcessor {
          */
         void read(Writer writer) throws IOException {
             writer.append("        if (dataBlock.exists(\"").append(dataName).append("\")) data.");
-            if(setter == null)
-                writer.append(fieldName).append(" = (").append(fieldType).append(") dataBlock.get(\"").append(dataName).append("\")");
-            else
-                writer.append(setter).append("((").append(fieldType).append(") dataBlock.get(\"").append(dataName).append("\"))");
+
+            if(this.setter == null) {
+                writer.append(this.fieldName).append(" = ");
+                readValue(writer);
+            } else {
+                writer.append(this.setter).append("(");
+                readValue(writer);
+                writer.append(")");
+            }
             writer.append(";\n");
+        }
+
+        /**
+         * Appends the data block value reference.
+         */
+        private void readValue(Writer writer) throws IOException {
+            if(enumMethod == null) {
+                writer.append("(").append(this.fieldType).append(") dataBlock.get(\"").append(this.dataName).append("\")");
+            } else if(enumMethod == Data.Enum.Method.NAME) {
+                writer.append(this.fieldType).append(".valueOf((java.lang.String)").append("dataBlock.get(\"").append(this.dataName).append("\"))");
+            } else if(enumMethod == Data.Enum.Method.ORDINAL) {
+                writer.append(this.fieldType).append(".values()[((int)").append("dataBlock.get(\"").append(this.dataName).append("\"))]");
+            }
         }
     }
 }

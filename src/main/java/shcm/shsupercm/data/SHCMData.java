@@ -8,9 +8,10 @@ public class SHCMData {
     /**
      * The comparable representation of the library's internal version.
      */
-    public static final int versionID = 11;
+    public static final int versionID = 12;
     /**
-     * The comparable representation of the data'a format's version.
+     * The comparable representation of the data's format's version.<br>
+     * This refers to how the data itself is stored and not any of the API functions and methods.
      */
     public static final int formatID = 4;
     /**
