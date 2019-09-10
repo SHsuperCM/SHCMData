@@ -13,6 +13,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
+    javadoc.options.addStringOption('Xdoclint:none', '-quiet')
 }
 
 artifacts {
