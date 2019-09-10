@@ -76,7 +76,7 @@ public @interface Data {
         enum Method {
             /**
              * Defines that the enum values should be stored as their ordinal position(integer index).<br>
-             * Serializes & deserializes faster and weighs less than {@link #NAME}.
+             * Serializes and deserializes faster as well as weighs less than {@link #NAME}.
              */
             ORDINAL,
             /**
