@@ -201,7 +201,7 @@ public class DataKeyedBlock<K> {
 
             string.append(DataStringConversion.toString(key));
             string.append(':');
-            string.append(DataStringConversion.toString(key));
+            string.append(DataStringConversion.toString(value.toString()));
         }
         string.append('}');
         return string.toString();
