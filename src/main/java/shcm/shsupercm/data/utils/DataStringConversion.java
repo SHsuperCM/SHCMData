@@ -121,22 +121,25 @@ public class DataStringConversion {
         if(object instanceof Boolean)
             return object.toString();
         if(object instanceof Byte)
-            return string + 'B';
+            return string + 'b';
         if(object instanceof Short)
-            return string + 'S';
+            return string + 's';
         if(object instanceof Character)
             return '\'' + object.toString() + '\'';
         if(object instanceof Integer)
-            return string + 'I';
+            return string + 'i';
         if(object instanceof Float)
-            return string + 'F';
+            return string + 'f';
         if(object instanceof Long)
-            return string + 'L';
+            return string + 'l';
         if(object instanceof Double)
-            return string + 'D';
+            return string + 'd';
 
         return string;
     }
+
+    //For reading first non escaped string
+    //"(?:[^"\\]|\\.)*"
 
     //todo split into more specific exceptions
     public static class StringFormatException extends RuntimeException {}

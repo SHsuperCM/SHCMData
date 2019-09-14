@@ -371,10 +371,8 @@ public class DataSerializer {
 
             case -3: {
                 Object[] values = new Object[dataIn.readInt()];
-                for (int i = 0; i < values.length; i++) {
+                for (int i = 0; i < values.length; i++)
                     values[i] = read((byte) -1, dataIn);
-                }
-
                 return Arrays.copyOf(values, values.length, values[0].getClass().equals(DataBlock.class) ? DataBlock[].class : IData[].class);
             }
             case -2: {

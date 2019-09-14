@@ -59,9 +59,14 @@ public class DataRegistry {
      * @param datablock the data block to read into the new {@link IData}.
      * @return the new {@link IData} instance.
      */
-    public static IData read(DataBlock datablock) {
+    public static Object read(DataBlock datablock) {
         DataAnnotationRegistry.init(false);
-        return REGISTRY.get(new UniqueDataId((byte[]) datablock.get(DATA_ID_IDENTIFIER))).read(datablock);
+
+        Builder builder = REGISTRY.get(new UniqueDataId((byte[]) datablock.get(DATA_ID_IDENTIFIER)));
+        if(builder == null)
+            return datablock;
+        else
+            return builder.read(datablock);
     }
 
     /**
