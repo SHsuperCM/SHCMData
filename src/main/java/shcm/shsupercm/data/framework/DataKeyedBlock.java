@@ -2,6 +2,7 @@ package shcm.shsupercm.data.framework;
 
 import shcm.shsupercm.data.data.DataRegistry;
 import shcm.shsupercm.data.data.IData;
+import shcm.shsupercm.data.utils.DataStringConversion;
 import shcm.shsupercm.data.utils.Equality;
 
 import java.io.DataInput;
@@ -185,6 +186,27 @@ public class DataKeyedBlock<K> {
         throw new DataSerializer.UnexpectedByteException();
     }
 
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+        string.append('{');
+        boolean comma = false;
+        for (K key : values.keySet()) {
+            Object value = values.get(key);
+
+            if(comma)
+                string.append(',');
+            else
+                comma = true;
+
+            string.append(DataStringConversion.toString(key));
+            string.append(':');
+            string.append(DataStringConversion.toString(key));
+        }
+        string.append('}');
+        return string.toString();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
@@ -205,6 +227,8 @@ public class DataKeyedBlock<K> {
             return false;
         }
     }
+
+
 
     /**
      * Thrown when constructing a {@link String}-keyed {@link DataKeyedBlock} instead of {@link DataBlock}.
