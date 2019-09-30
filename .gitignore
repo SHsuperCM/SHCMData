@@ -5,3 +5,4 @@ generated/
 release/
 build/
 gradle/
+*Test.java

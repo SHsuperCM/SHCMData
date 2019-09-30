@@ -5,6 +5,8 @@ import shcm.shsupercm.data.data.IData;
 import shcm.shsupercm.data.framework.DataBlock;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Converts data to and from a string representation.
@@ -152,7 +154,15 @@ public class DataStringConversion {
                 return extractFirstValue(string.substring(1));
             int length = 0;
             StringBuilder read = new StringBuilder();
-            if(Character.toLowerCase(first) == 'f') {
+            if(first == ',')
+                return new ReadValue(string.substring(1), 1, SYNTAX.NEXT);
+            else if(first == ':')
+                return new ReadValue(string.substring(1), 1, SYNTAX.EXPAND);
+            else if(first == ']')
+                return new ReadValue(string.substring(1), 1, SYNTAX.EOA);
+            else if(first == '}')
+                return new ReadValue(string.substring(1), 1, SYNTAX.EOB);
+            else if(Character.toLowerCase(first) == 'f') {
                 if(string.substring(0, 5).toLowerCase().equals("false"))
                     return new ReadValue(string.substring(5), 5, false);
             } else if(Character.toLowerCase(first) == 't') {
@@ -173,24 +183,29 @@ public class DataStringConversion {
                 String readString = read.toString();
                 switch (Character.toLowerCase(c)) {
                     case 'b':
-                        //todo throw exception if contains decimal point.
+                        if(readString.contains("."))
+                            throw new StringFormatException();
                         return new ReadValue(string.substring(length + 1), length, Byte.parseByte(readString));
                     case 's':
-                        //todo throw exception if contains decimal point.
+                        if(readString.contains("."))
+                            throw new StringFormatException();
                         return new ReadValue(string.substring(length + 1), length, Short.parseShort(readString));
                     case 'f':
                         return new ReadValue(string.substring(length + 1), length, Float.parseFloat(readString));
                     case 'l':
-                        //todo throw exception if contains decimal point.
+                        if(readString.contains("."))
+                            throw new StringFormatException();
                         return new ReadValue(string.substring(length + 1), length, Long.parseLong(readString));
                     case 'd':
                         return new ReadValue(string.substring(length + 1), length, Double.parseDouble(readString));
                     case 'i':
-                        //todo throw exception if contains decimal point.
+                        if(readString.contains("."))
+                            throw new StringFormatException();
                         return new ReadValue(string.substring(length + 1), length, Integer.parseInt(readString));
 
                     default:
-                        //todo throw exception if contains decimal point.
+                        if(readString.contains("."))
+                            throw new StringFormatException();
                         return new ReadValue(string.substring(length), length, Integer.parseInt(readString));
                 }
             } else  if(first == '\'') {
@@ -203,7 +218,8 @@ public class DataStringConversion {
                 int backslashes = 0;
 
                 while(true) {
-                    //todo throw exception if there is no 2nd quotation mark
+                    if(length >= string.length())
+                        throw new StringFormatException();
                     char c = string.charAt(length);
                     length++;
                     if(c == '"' && backslashes % 2 == 0)
@@ -215,13 +231,70 @@ public class DataStringConversion {
                     else
                         backslashes = 0;
                 }
-            }//todo datablocks, datakeyedblocks and arrays
+            } else if(first == '{') {//todo.. do..
+
+            } else if(first == '[') {
+                ArrayList<Object> values = new ArrayList<>();
+                length++;
+                ReadValue readValue = extractFirstValue(string.substring(1));
+                if(readValue != null)
+                    length += readValue.valueLength;
+
+                while (true) {
+                    if(readValue == null)
+                        throw new StringFormatException();
+                    if(readValue.value instanceof SYNTAX) {
+                        if(readValue.value == SYNTAX.EOA) {
+                            return new ReadValue(readValue.remainingString, length, Equality.arrayPrimitiveStandardsCast(values));
+                        }
+                        throw new StringFormatException();
+                    }
+                    values.add(readValue.value);
+                    readValue = extractFirstValue(readValue.remainingString);
+                    if(readValue != null)
+                        length += readValue.valueLength;
+                    if(readValue != null && readValue.value == SYNTAX.EOA)
+                        return new ReadValue(readValue.remainingString, length, Equality.arrayPrimitiveStandardsCast(values));
+                    if(readValue != null && readValue.value == SYNTAX.NEXT) {
+                        readValue = extractFirstValue(readValue.remainingString);
+                        if(readValue != null)
+                            length += readValue.valueLength;
+                    } else
+                        throw new StringFormatException();
+                }
+            }
         }
 
         return null;
     }
 
+    /**
+     * Syntax symbols.
+     */
+    private enum SYNTAX {
+        /**
+         * Signifying the move to another block/array entry.
+         */
+        NEXT,
+        /**
+         * Signifying the expansion of a value key its actual value.
+         */
+        EXPAND,
+        /**
+         * Signifying the end of an array.
+         */
+        EOA,
+        /**
+         * Signifying the end of a block.
+         */
+        EOB
+    }
+
+    /**
+     *
+     */
     public static class ReadValue {
+
         public final String remainingString;
         public final int valueLength;
         public final Object value;
