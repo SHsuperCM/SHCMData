@@ -3,6 +3,7 @@ package shcm.shsupercm.data.utils;
 import shcm.shsupercm.data.data.DataRegistry;
 import shcm.shsupercm.data.data.IData;
 import shcm.shsupercm.data.framework.DataBlock;
+import shcm.shsupercm.data.framework.DataKeyedBlock;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -142,6 +143,8 @@ public class DataStringConversion {
         return string;
     }
 
+    //todo look for things that contradict the data format
+    //todo unique exception throwing
     /**
      * Reads the string and extracts the first(SHCMData compatible) value it finds.
      * @param string the string to read from.
@@ -231,9 +234,36 @@ public class DataStringConversion {
                     else
                         backslashes = 0;
                 }
-            } else if(first == '{') {//todo.. do..
-
-            } else if(first == '[') {
+            } else if(first == '{') {//todo test complex values and test no EOB
+                //length++;
+                ReadValue readValue = extractFirstValue(string.substring(1));
+                if(readValue == null)
+                    throw new StringFormatException();
+                DataKeyedBlock dataKeyedBlock = readValue.value instanceof String ? new DataBlock() : new DataKeyedBlock<>(readValue.value.getClass());
+                //length += readValue.valueLength;
+                Object key;
+                while (true) {
+                    if(readValue == null || readValue.value instanceof SYNTAX)
+                        throw new StringFormatException();
+                    key = readValue.value;
+                    readValue = extractFirstValue(readValue.remainingString);
+                    if(readValue == null || readValue.value != SYNTAX.EXPAND)
+                        throw new StringFormatException();
+                    readValue = extractFirstValue(readValue.remainingString);
+                    if(readValue == null || readValue.value instanceof SYNTAX)
+                        throw new StringFormatException();
+                    dataKeyedBlock.set(key, readValue.value);
+                    readValue = extractFirstValue(readValue.remainingString);
+                    if(readValue == null || !(readValue.value instanceof SYNTAX))
+                        throw new StringFormatException();
+                    if(readValue.value == SYNTAX.EOB) {
+                        return new ReadValue(readValue.remainingString, length, dataKeyedBlock);//todo summarize length
+                    } else if(readValue.value == SYNTAX.NEXT) {
+                        readValue = extractFirstValue(readValue.remainingString);
+                    } else
+                        throw new StringFormatException();
+                }
+            } else if(first == '[') {//todo test no EOA
                 ArrayList<Object> values = new ArrayList<>();
                 length++;
                 ReadValue readValue = extractFirstValue(string.substring(1));

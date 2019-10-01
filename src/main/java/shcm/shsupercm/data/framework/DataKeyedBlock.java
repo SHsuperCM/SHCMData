@@ -1,7 +1,5 @@
 package shcm.shsupercm.data.framework;
 
-import shcm.shsupercm.data.data.DataRegistry;
-import shcm.shsupercm.data.data.IData;
 import shcm.shsupercm.data.utils.DataStringConversion;
 import shcm.shsupercm.data.utils.Equality;
 
@@ -42,8 +40,8 @@ public class DataKeyedBlock<K> {
      * @param keyType See {@link #keyType}.
      */
     public DataKeyedBlock(Class<K> keyType) {
-        if(keyType.equals(String.class))
-            throw new NonDataBlockStringKeyedBlockException();
+        if(keyType.equals(String.class) || (keyType != Boolean.class && keyType != Byte.class && keyType != Short.class && keyType != Character.class && keyType != Integer.class && keyType != Float.class && keyType != Long.class && keyType != Double.class))
+            throw new InvalidKeyTypeException();
         this.keyType = keyType;
     }
 
@@ -231,7 +229,19 @@ public class DataKeyedBlock<K> {
 
 
     /**
-     * Thrown when constructing a {@link String}-keyed {@link DataKeyedBlock} instead of {@link DataBlock}.
+     * Thrown when constructing a {@link DataKeyedBlock} with an invalid key type.<br>
+     * Note that the compatible types are the following:<br>
+     * <ul>
+     * <li>{@link Boolean}.class</li>
+     * <li>{@link Byte}.class</li>
+     * <li>{@link Short}.class</li>
+     * <li>{@link Character}.class</li>
+     * <li>{@link Integer}.class</li>
+     * <li>{@link Float}.class</li>
+     * <li>{@link Long}.class</li>
+     * <li>{@link Double}.class</li>
+     * </ul>
+     * For String keys, use {@link DataBlock} instead.
      */
-    public static class NonDataBlockStringKeyedBlockException extends RuntimeException {}
+    public static class InvalidKeyTypeException extends RuntimeException {}
 }
