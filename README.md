@@ -14,5 +14,5 @@ done by looking directly at Mojang's code.
 For those unaware of the NBT structure, SHCMData should resemble json a 
 bit.
 
-
+### Note! Do not use latest builds! Only releases and reference by release versions!
 ### Head over to the [wiki](https://github.com/SHsuperCM/SHCMData/wiki) for more information!
