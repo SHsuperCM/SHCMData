@@ -139,6 +139,11 @@ public class Equality {
                     for (int i = 0; i < values.length; i++)
                         values[i] = (double) Array.get(originalValues, i);
                     return values;
+                } else if (Array.get(originalValues, 0) instanceof String) {
+                    String[] values = new String[Array.getLength(originalValues)];
+                    for (int i = 0; i < values.length; i++)
+                        values[i] = (String) Array.get(originalValues, i);
+                    return values;
                 }
             }
         }

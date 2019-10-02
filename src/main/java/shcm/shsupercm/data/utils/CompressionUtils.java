@@ -12,7 +12,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public abstract class CompressionUtils {
     /**
-     * Serialization and deserialization is done without any compression.
+     * Serialization and deserialization is done without any compression. (stores raw values)
      */
     public static final CompressionUtils NONE = new CompressionUtils() {
         @Override
