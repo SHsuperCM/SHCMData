@@ -8,6 +8,7 @@ import shcm.shsupercm.data.framework.DataKeyedBlock;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 /**
  * Converts data to and from a string representation.
@@ -119,16 +120,32 @@ public class DataStringConversion {
             return sb.toString();
         }
 
-        if(object instanceof String)
-            return '\"' + object.toString() + '\"';
-        if(object instanceof Boolean)
-            return object.toString();
+        if(object instanceof String) {
+            if(string.contains("\"")) {
+                StringBuilder sb = new StringBuilder();
+
+                int backslash = 0;
+                for(char c : string.toCharArray()) {
+                    if(c == '"' && backslash % 2 == 0)
+                        sb.append('\\');
+                    if(c == '\\')
+                        backslash++;
+                    else
+                        backslash = 0;
+                    sb.append(c);
+                }
+
+                string = sb.toString();
+            }
+            return '\"' + string + '\"';
+        } if(object instanceof Boolean)
+            return string;
         if(object instanceof Byte)
             return string + 'b';
         if(object instanceof Short)
             return string + 's';
         if(object instanceof Character)
-            return '\'' + object.toString() + '\'';
+            return '\'' + string + '\'';
         if(object instanceof Integer)
             return string + 'i';
         if(object instanceof Float)
@@ -154,40 +171,40 @@ public class DataStringConversion {
     //todo unique exception throwing
     /**
      * Reads the string and extracts the first(SHCMData compatible) value it finds.
-     * @param string the string to read from.
+     * @param substring the string to read from.
      * @return the returned value and some more information.
      */
-    private static ReadValue extractFirstValue(String string) throws StringFormatException {
-        if(string != null && !string.isEmpty()) {
-            char first = string.charAt(0);
+    private static ReadValue extractFirstValue(String substring) throws StringFormatException {
+        if(substring != null && !substring.isEmpty()) {
+            char first = substring.charAt(0);
             if(first == ' ' || first == '\n' || first == '\t')
-                return extractFirstValue(string.substring(1));
+                return extractFirstValue(substring.substring(1));
             int length = 0;
             StringBuilder read = new StringBuilder();
             if(first == ',')
-                return new ReadValue(string.substring(1), SYNTAX.NEXT);
+                return new ReadValue(substring.substring(1), SYNTAX.NEXT);
             else if(first == ':')
-                return new ReadValue(string.substring(1), SYNTAX.EXPAND);
+                return new ReadValue(substring.substring(1), SYNTAX.EXPAND);
             else if(first == ']')
-                return new ReadValue(string.substring(1), SYNTAX.EOA);
+                return new ReadValue(substring.substring(1), SYNTAX.EOA);
             else if(first == '}')
-                return new ReadValue(string.substring(1), SYNTAX.EOB);
+                return new ReadValue(substring.substring(1), SYNTAX.EOB);
             else if(Character.toLowerCase(first) == 'f') {
-                if(string.substring(0, 5).toLowerCase().equals("false"))
-                    return new ReadValue(string.substring(5), false);
+                if(substring.substring(0, 5).toLowerCase().equals("false"))
+                    return new ReadValue(substring.substring(5), false);
             } else if(Character.toLowerCase(first) == 't') {
-                if(string.substring(0, 4).toLowerCase().equals("true"))
-                    return new ReadValue(string.substring(4), true);
+                if(substring.substring(0, 4).toLowerCase().equals("true"))
+                    return new ReadValue(substring.substring(4), true);
             } else if((first >= '0' && first <= '9') || first == '-' || first == '.') {
                 read.append(first);
                 length++;
-                char c = string.charAt(length);
+                char c = substring.charAt(length);
                 while((c >= '0' && c <= '9') || c == '-' || c == '.') {
                     read.append(c);
                     length++;
-                    if(length >= string.length())
+                    if(length >= substring.length())
                         break;
-                    c = string.charAt(length);
+                    c = substring.charAt(length);
                 }
 
                 String readString = read.toString();
@@ -195,32 +212,32 @@ public class DataStringConversion {
                     case 'b':
                         if(readString.contains("."))
                             throw new StringFormatException();
-                        return new ReadValue(string.substring(length + 1), Byte.parseByte(readString));
+                        return new ReadValue(substring.substring(length + 1), Byte.parseByte(readString));
                     case 's':
                         if(readString.contains("."))
                             throw new StringFormatException();
-                        return new ReadValue(string.substring(length + 1), Short.parseShort(readString));
+                        return new ReadValue(substring.substring(length + 1), Short.parseShort(readString));
                     case 'f':
-                        return new ReadValue(string.substring(length + 1), Float.parseFloat(readString));
+                        return new ReadValue(substring.substring(length + 1), Float.parseFloat(readString));
                     case 'l':
                         if(readString.contains("."))
                             throw new StringFormatException();
-                        return new ReadValue(string.substring(length + 1), Long.parseLong(readString));
+                        return new ReadValue(substring.substring(length + 1), Long.parseLong(readString));
                     case 'd':
-                        return new ReadValue(string.substring(length + 1), Double.parseDouble(readString));
+                        return new ReadValue(substring.substring(length + 1), Double.parseDouble(readString));
                     case 'i':
                         if(readString.contains("."))
                             throw new StringFormatException();
-                        return new ReadValue(string.substring(length + 1), Integer.parseInt(readString));
+                        return new ReadValue(substring.substring(length + 1), Integer.parseInt(readString));
 
                     default:
                         if(readString.contains("."))
                             throw new StringFormatException();
-                        return new ReadValue(string.substring(length), Integer.parseInt(readString));
+                        return new ReadValue(substring.substring(length), Integer.parseInt(readString));
                 }
             } else  if(first == '\'') {
-                if(string.charAt(2) == '\'')
-                    return new ReadValue(string.substring(3), string.charAt(1));
+                if(substring.charAt(2) == '\'')
+                    return new ReadValue(substring.substring(3), substring.charAt(1));
             } else if(first == '"') {
                 read.append('"');
                 length++;
@@ -228,20 +245,21 @@ public class DataStringConversion {
                 int backslashes = 0;
 
                 while(true) {
-                    if(length >= string.length())
+                    if(length >= substring.length())
                         throw new StringFormatException();
-                    char c = string.charAt(length);
+                    char c = substring.charAt(length);
                     length++;
                     if(c == '"' && backslashes % 2 == 0)
-                        return new ReadValue(string.substring(length), read.toString().substring(1));
-                    read.append(c);
+                        return new ReadValue(substring.substring(length), read.toString().substring(1));
+                    if(c != '\\' || backslashes % 2 == 1)
+                        read.append(c);
                     if(c == '\\')
                         backslashes++;
                     else
                         backslashes = 0;
                 }
             } else if(first == '{') {
-                ReadValue readValue = extractFirstValue(string.substring(1));
+                ReadValue readValue = extractFirstValue(substring.substring(1));
                 if(readValue == null)
                     throw new StringFormatException();
                 DataKeyedBlock dataKeyedBlock = readValue.value instanceof String ? new DataBlock() : new DataKeyedBlock<>(readValue.value.getClass());
@@ -272,7 +290,7 @@ public class DataStringConversion {
                 }
             } else if(first == '[') {
                 ArrayList<Object> values = new ArrayList<>();
-                ReadValue readValue = extractFirstValue(string.substring(1));
+                ReadValue readValue = extractFirstValue(substring.substring(1));
 
                 while (true) {
                     if(readValue == null)
