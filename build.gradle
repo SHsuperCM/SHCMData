@@ -8,12 +8,20 @@ sourceCompatibility = 1.8
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
+
+    exclude "**/Test.java"
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
     javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
+    exclude "**/Test.html"
+}
+
+jar {
+    exclude "**/Test.class"
 }
 
 artifacts {
