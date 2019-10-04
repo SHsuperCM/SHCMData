@@ -1,8 +1,12 @@
 [![](https://jitpack.io/v/SHsuperCM/SHCMData.svg)](https://jitpack.io/#SHsuperCM/SHCMData)
 # SHCMData
-SHsuperCM's data solution
+SHsuperCM's Data solution
 
 
+
+If you are looking for a way to work with the data structure in a non
+programatic context, you should take a look at the UI utility
+[SHCMDataEditor](https://github.com/SHsuperCM/SHCMDataEditor).
 
 SHCMData is a (WIP) library that should hopefully become a smart sensible
 data storage solution for java.
