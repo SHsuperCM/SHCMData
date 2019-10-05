@@ -32,7 +32,7 @@ public class DataKeyedBlock<K> {
      *     * Meaning that instead of boolean.class, use Boolean.class.
      * </pre>
      */
-    private final Class<K> keyType;
+    public final Class<K> keyType;
 
     /**
      * Constructs a DataKeyedBlock.
