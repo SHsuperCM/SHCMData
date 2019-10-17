@@ -262,7 +262,8 @@ public class DataStringConversion {
                 ReadValue readValue = extractFirstValue(substring.substring(1));
                 if(readValue == null)
                     throw new StringFormatException();
-                DataKeyedBlock dataKeyedBlock = readValue.value instanceof String ? new DataBlock() : new DataKeyedBlock<>(readValue.value.getClass());
+                boolean isDataBlock = readValue.value instanceof String;
+                DataKeyedBlock dataKeyedBlock = isDataBlock ? new DataBlock() : new DataKeyedBlock<>(readValue.value.getClass());
                 Object key;
                 while (true) {
                     if(readValue == null || readValue.value instanceof SYNTAX)
@@ -282,7 +283,7 @@ public class DataStringConversion {
                     if(readValue == null || !(readValue.value instanceof SYNTAX))
                         throw new StringFormatException();//if null, could not find EOB
                     if(readValue.value == SYNTAX.EOB) {
-                        return new ReadValue(readValue.remainingString, dataKeyedBlock);
+                        return new ReadValue(readValue.remainingString, (isDataBlock && dataKeyedBlock.exists(DataRegistry.DATA_ID_IDENTIFIER)) ? DataRegistry.read((DataBlock) dataKeyedBlock) : dataKeyedBlock);
                     } else if(readValue.value == SYNTAX.NEXT) {
                         readValue = extractFirstValue(readValue.remainingString);
                     } else
@@ -298,7 +299,10 @@ public class DataStringConversion {
                     if(readValue.value instanceof SYNTAX) {
                         if(readValue.value == SYNTAX.EOA) {
                             try {
-                                return new ReadValue(readValue.remainingString, Equality.arrayPrimitiveStandardsCast(values));
+                                Object array = standardizeArray(values);
+                                if(array != null && array.getClass().equals(Object[].class))
+                                    throw new StringFormatException();
+                                return new ReadValue(readValue.remainingString, array);
                             } catch (ClassCastException e) {
                                 throw new StringFormatException();
                             }
@@ -309,7 +313,10 @@ public class DataStringConversion {
                     readValue = extractFirstValue(readValue.remainingString);
                     if(readValue != null && readValue.value == SYNTAX.EOA) {
                         try {
-                            return new ReadValue(readValue.remainingString, Equality.arrayPrimitiveStandardsCast(values));
+                            Object array = standardizeArray(values);
+                            if(array != null && array.getClass().equals(Object[].class))
+                                throw new StringFormatException();
+                            return new ReadValue(readValue.remainingString, array);
                         } catch (ClassCastException e) {
                             throw new StringFormatException();
                         }
@@ -325,6 +332,46 @@ public class DataStringConversion {
         return null;
     }
 
+    private static Object standardizeArray(ArrayList<?> originalValues) {
+        if(originalValues.size() >= 1) {
+            Object first = originalValues.get(0);
+            if(first instanceof DataBlock) {
+                try {
+                    DataBlock[] array = new DataBlock[originalValues.size()];
+                    array[0] = (DataBlock) first;
+                    for (int i = 1; i < array.length; i++) {
+                        array[i] = (DataBlock) originalValues.get(i);
+                    }
+                    return array;
+                } catch (Exception ignored) {}
+            }
+            if(first instanceof DataKeyedBlock) {
+                try {
+                    DataKeyedBlock[] array = new DataKeyedBlock[originalValues.size()];
+                    array[0] = (DataKeyedBlock) first;
+                    for(int i = 1; i < array.length; i++) {
+                        array[i] = (DataKeyedBlock)originalValues.get(i);
+                    }
+                    return array;
+                } catch (Exception ignored) {}
+            }
+            if(first instanceof IData) {
+                try {
+                    IData[] array = new IData[originalValues.size()];
+                    array[0] = (IData) first;
+                    for(int i = 1; i < array.length; i++) {
+                        array[i] = (IData)originalValues.get(i);
+                    }
+                    return array;
+                } catch (Exception ignored) {}
+            }
+        } else {
+            return null;
+        }
+
+        return Equality.arrayPrimitiveStandardsCast(originalValues);
+    }
+
     /**
      * Syntax symbols.
      */
@@ -334,7 +381,7 @@ public class DataStringConversion {
          */
         NEXT,
         /**
-         * Signifying the expansion of a value key its actual value.
+         * Signifying the expansion of a value key's actual value.
          */
         EXPAND,
         /**

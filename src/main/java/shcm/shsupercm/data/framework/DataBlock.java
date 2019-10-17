@@ -7,7 +7,9 @@ import java.io.IOException;
  * Default {@link DataKeyedBlock} with {@link String} key optimization.
  */
 public class DataBlock extends DataKeyedBlock<String> {
-    public DataBlock() {}
+    public DataBlock() {
+        super(String.class, true);
+    }
 
     @Override
     protected void write(DataOutput dataOut) throws IOException, DataSerializer.UnknownDataTypeException {

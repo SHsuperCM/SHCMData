@@ -40,13 +40,19 @@ public class DataKeyedBlock<K> {
      * @param keyType See {@link #keyType}.
      */
     public DataKeyedBlock(Class<K> keyType) {
-        if(keyType.equals(String.class) || (keyType != Boolean.class && keyType != Byte.class && keyType != Short.class && keyType != Character.class && keyType != Integer.class && keyType != Float.class && keyType != Long.class && keyType != Double.class))
-            throw new InvalidKeyTypeException();
-        this.keyType = keyType;
+        this(keyType, false);
     }
 
-    protected DataKeyedBlock() {
-        keyType = null;
+    /**
+     * Constructs a DataKeyedBlock.
+     *
+     * @param keyType The key type.
+     * @param forceKeyType Should the key type be checked against the data format.
+     */
+    protected DataKeyedBlock(Class<K> keyType, boolean forceKeyType) {
+        if (!forceKeyType && (keyType.equals(String.class) || (keyType != Boolean.class && keyType != Byte.class && keyType != Short.class && keyType != Character.class && keyType != Integer.class && keyType != Float.class && keyType != Long.class && keyType != Double.class)))
+            throw new InvalidKeyTypeException();
+        this.keyType = keyType;
     }
 
     /**
